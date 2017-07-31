@@ -1,0 +1,434 @@
+							      |	///////////////// YIFAN'S ORIGINAL VERSION //////////////////
+							      >	//............... Amended by Cat Chenal to allow for chemical
+							      >	PROT monte2_reduce(PROT prot);
+							      >	RES    **flip_res;
+							      >	GROUP  **flip_group;
+							      >	ISTATES *TheArray;
+							      >
+PROT monte2_reduce(PROT prot);				      <
+int  monte2_load_pairwise(PROT prot);			      <
+int  monte2_check_toggle(PROT prot);			      <
+double free_unf(PROT prot);				      <
+int curve_fitting(PROT prot);				      <
+int monte_out(PROT prot, int n_titra);			      <
+int   load1_pairwise();					      <
+double  **pairwise;					      |	int  monte2_check_toggle(PROT prot);
+RES     **flip_res;					      |	int  monte2_load_pairwise(PROT prot);
+GROUP     **flip_group;					      |	int  curve_fitting(PROT prot);
+long    idum;						      |	int  monte_out(PROT prot, int n_titra);
+double  beta;						      |	int  load1_pairwise();
+ISTATES *TheArray;					      |	long idum;
+int monte2() {						      |	double beta;
+							      |	double free_unf(PROT prot);
+// printf("monte2 I added the entropy correction function\n") |	double **pairwise;
+							      >	//...........................................................
+							      >	int monte2()
+							      >	{
+    float ph, eh, titr_pnt, temp, free_eng;		      |	    float ph, eh, extra, titr_pnt, temp, free_eng; // @@@ ext
+int r1=0;						      |	    int r1=0;
+int r2=0;						      |	    int r2=0;
+int r=0;						      <
+    							      |
+       // printf("before load conflist\n"); 		      <
+       // printf("after load conflist\n"); 		      <
+   //  fprintf("ssssss",idum);				      <
+   // printf("before load pairwise\n"); 		      <
+ //   printf("after load pairwise\n"); 			      |
+    							      <
+    							      |
+    							      |
+    fp = fopen(MC_OUT,"w"); 				      |	    fp = fopen(MC_OUT,"w");
+    for (i=0;i<env.monte_nstart;i++) ran2(&idum);	      |	    for (i=0; i<env.monte_nstart; i++) ran2(&idum);
+    for (ic=0;ic<prot.nc;ic++) {			      |	    for (ic=0;ic<prot.nc;ic++)
+							      >	    {
+    							      |
+    /* pH/Eh titration */				      |	    /* pH/Eh/ch titration */
+    for (i_titra=0;i_titra<env.titr_steps;i_titra++) {	      |	    for (i_titra=0; i_titra<env.titr_steps; i_titra++)
+							      >	    {
+        						      |
+        if (env.titr_type == 'p') ph = env.titr_ph0 + ((float |	        extra = env.titr_ex0; // @@@ For 'added energy' titra
+        else eh = env.titr_eh0 + ((float)i_titra)*env.titr_eh |
+        fp = fopen(MC_OUT,"a"); fprintf(fp,"\npH = %6.2f  Eh  |	        if (env.titr_type == 'p') {
+        						      |	            ph = env.titr_ph0 + ((float)i_titra)*env.titr_phd
+        for (ic=0; ic<prot.nc; ic++) {			      |	        }
+            prot.conf[ic]->E_ph =			      |	        else if (env.titr_type == 'e') {
+            env.monte_temp/ROOMT * prot.conf[ic]->H * (ph-pro |	            eh = env.titr_eh0 + ((float)i_titra)*env.titr_ehd
+            prot.conf[ic]->E_eh =			      |	        }
+            env.monte_temp/ROOMT * prot.conf[ic]->e * (eh-pro |	        else { extra = env.titr_ex0 + ((float)i_titra)*env.ti
+            						      |
+							      >	        fp = fopen(MC_OUT,"a"); fprintf(fp,"\npH = %6.2f  Eh 
+							      >
+							      >	        for (ic=0; ic<prot.nc; ic++)
+							      >	        {
+							      >	            prot.conf[ic]->E_ph = env.monte_temp/ROOMT * prot
+							      >	            prot.conf[ic]->E_eh = env.monte_temp/ROOMT * prot
+							      >
+            + prot.conf[ic]->E_vdw1			      |	                                  + prot.conf[ic]->E_vdw1
+            + prot.conf[ic]->E_epol			      |	                                  + prot.conf[ic]->E_epol
+            + prot.conf[ic]->E_tors			      |	                                  + prot.conf[ic]->E_tors
+            + prot.conf[ic]->E_dsolv			      |	                                  + prot.conf[ic]->E_dsolv
+            + prot.conf[ic]->E_extra			      |	                                  + prot.conf[ic]->E_extra
+            + prot.conf[ic]->E_ph			      |	                                  + prot.conf[ic]->E_ph
+            + prot.conf[ic]->E_eh			      |	                                  + prot.conf[ic]->E_eh
+            + prot.conf[ic]->E_TS			      |	                                  + prot.conf[ic]->E_TS
+            - prot.conf[ic]->PE_TS;			      |	                                  - prot.conf[ic]->PE_TS;
+							      >
+							      >	            // Adapted from monte.c as per Xuyu:
+							      >	            // "extra" from 'extra energy' titration added to
+							      >	            if (!strncmp(prot.conf[ic]->uniqID+3, "DM", 2)) {
+        						      |
+        						      |
+        for (ic=0;ic<prot_w.nc;ic++) prot_w.conf[ic]->occ_tab |	        for (ic=0;ic<prot_w.nc;ic++) { prot_w.conf[ic]->occ_t
+        						      |
+        while(1) {					      |	        while(1)
+							      >	        {
+            						      |
+            if (i_red>=2) {				      |	            if (i_red>=2)
+							      >	            {
+                for (ic=0;ic<prot_w.nc;ic++) {		      |	                for (ic=0;ic<prot_w.nc;ic++)
+							      >	                {
+                    for (j_red=0;j_red<i_red;j_red++) {	      |	                    for (j_red=0;j_red<i_red;j_red++)
+							      >	                    {
+            						      |
+            for (ic=0;ic<prot_w.nc;ic++) prot_w.conf[ic]->occ |	            for (ic=0;ic<prot_w.nc;ic++) { prot_w.conf[ic]->o
+            						      |
+            						      |
+            for (i_res=0;i_res<prot_red.n_res;i_res++) {      |	            for (i_res=0;i_res<prot_red.n_res;i_res++)
+							      >	            {
+            						      |
+            for (i_res=0;i_res<prot_red.n_res;i_res++) {      |	            for (i_res=0;i_res<prot_red.n_res;i_res++)
+							      >	            {
+                for (j_res=i_res+1;j_res<prot_red.n_res;j_res |	                for (j_res=i_res+1;j_res<prot_red.n_res;j_res
+							      >	                {
+           // printf("%d",n_cycle);			      <
+            for (i_cycle=0;i_cycle<n_cycle;i_cycle++) {	      <
+                monte2_mc(&prot_red);			      <
+            //    if(i_red==0)//my code start here	      <
+                  					      <
+							      >	            for (i_cycle=0;i_cycle<n_cycle;i_cycle++)
+							      >	            {
+							      >	                monte2_mc(&prot_red);
+            						      |
+            for (i_step=0;i_step<env.anneal_nstep;i_step++) { |	            for (i_step=0;i_step<env.anneal_nstep;i_step++)
+							      >	            {
+                for (i_cycle=0;i_cycle<n_cycle;i_cycle++) {   |	                for (i_cycle=0;i_cycle<n_cycle;i_cycle++)
+							      >	                {
+ENTROPY_CORRECTION_FUNCTION(&prot_red);			      |	                    ENTROPY_CORRECTION_FUNCTION(&prot_red);
+							      <
+            // if(i_red==0)				      <
+            						      <
+            						      |
+                n_cycle_max = (prot_red.nc*env.monte_niter_ma |	            {    n_cycle_max = (prot_red.nc*env.monte_niter_m
+            else n_cycle_max = -1;			      |	            else { n_cycle_max = -1; }
+            while (1) {					      <
+                if (i_cycle >= n_cycle_min) 		      <
+{							      <
+                    if (n_cycle_max != -1) {		      <
+                        if (i_cycle >= n_cycle_max) break;    <
+                    }					      <
+                    if (!fmod(i_cycle,n_cycle_chk)) {	      <
+							      <
+for(r1=0;r1<prot_red.n_res;r1++)			      <
+for(r2=0;r2<prot_red.res[r1].num_of_states;r2++)	      <
+prot_red.res[r1].IS[r2].totalOCC=0;			      <
+                        for (ic=0;ic<prot_red.nc;ic++) {      <
+							      <
+                            prot_red.conf[ic]->occ_old = prot <
+                            prot_red.conf[ic]->occ = (float)  <
+							      |	            while (1)
+                        } 				      |	            {
+                        				      |	                if (i_cycle >= n_cycle_min)
+							      >	                {
+							      >	                    if (n_cycle_max != -1) { if (i_cycle >= n
+							      >	                    if (!fmod(i_cycle,n_cycle_chk))
+							      >	                    {
+							      >			       for(r1=0; r1<prot_red.n_res; r1++)
+							      >	                       {
+							      >			           for(r2=0; r2<prot_red.res[r1].num_
+							      >	                           {
+							      >	                               prot_red.res[r1].IS[r2].totalO
+							      >	                           }
+							      >	                       }
+							      >
+							      >	                       for (ic=0; ic<prot_red.nc; ic++)
+							      >	                       {
+							      >	                           prot_red.conf[ic]->occ_old = prot_
+							      >	                           prot_red.conf[ic]->occ = (float) p
+							      >	                       }
+                        for (ic=0;ic<prot_red.nc;ic++) {      |	                        for (ic=0;ic<prot_red.nc;ic++)
+							      >	                        {
+               						      |	               }
+}   							      |			i_cycle++;
+i_cycle++;						      |			monte2_mc(&prot_red);
+monte2_mc(&prot_red);   				      |			ENTROPY_CORRECTION_FUNCTION(&prot_red);
+ENTROPY_CORRECTION_FUNCTION(&prot_red);			      |
+for(r1=0;r1<prot_red.n_res;r1++)			      |			for(r1=0;r1<prot_red.n_res;r1++)
+for(r2=0;r2<prot_red.res[r1].num_of_states;r2++)	      |	                {
+prot_red.res[r1].IS[r2].totalOCC=0;			      |			    for(r2=0;r2<prot_red.res[r1].num_of_state
+							      >	                    {
+							      >			        prot_red.res[r1].IS[r2].totalOCC=0;
+							      >	                    }
+							      >	                }
+            						      |
+            for (ic=0;ic<prot_w.nc;ic++) {		      |	            for (ic=0; ic<prot_w.nc; ic++)
+							      >	            {
+            						      |
+            for (ic=0;ic<prot_red.nc;ic++) {		      |	            for (ic=0;ic<prot_red.nc;ic++)
+							      >	            {
+            //ENTROPY_CORRECTION_FUNCTION(&prot_red);	      |	            for (ic=0;ic<prot_w.nc;ic++)
+            for (ic=0;ic<prot_w.nc;ic++) {		      |	            {
+            						      |
+            						      <
+            if (env.monte_do_energy) {			      |
+							      >	            if (env.monte_do_energy)
+							      >	            {
+            if (env.titr_type == 'p') titr_pnt = ph;	      |	            if (env.titr_type == 'p') { titr_pnt = ph; }
+            else titr_pnt = eh;				      |	            else if (env.titr_type == 'e') { titr_pnt = eh; }
+            for (ic=0;ic<prot_w.nc;ic++) {		      |	            else { titr_pnt = extra; }
+							      >
+							      >	            for (ic=0; ic<prot_w.nc; ic++)
+							      >	            {
+                titr_pnt,				      |	                           titr_pnt,
+                prot_w.conf[ic]->uniqID,		      |	                           prot_w.conf[ic]->uniqID,
+                prot_w.conf[ic]->occ,			      |	                           prot_w.conf[ic]->occ,
+                prot_w.conf[ic]->counter_trial,		      |	                           prot_w.conf[ic]->counter_trial,
+                i_cycle * env.monte_niter_cycle,	      |	                           i_cycle * env.monte_niter_cycle,
+                prot_w.conf[ic]->toggle);		      |	                           prot_w.conf[ic]->toggle);
+            						      |
+            //printf("free prot_red, biglist\n");	      |	            for (i_res=0; i_res<prot_red.n_res; i_res++)
+            for (i_res=0;i_res<prot_red.n_res;i_res++) {      |	            {
+                if (prot_red.res[i_res].n_ngh) free(prot_red. |	                if (prot_red.res[i_res].n_ngh) { free(prot_re
+            //printf("free prot_red, saved_states\n");	      <
+            //printf("free prot_red, conf\n");		      |	            if (prot_red.nc) { free(prot_red.conf); }
+            if (prot_red.nc) free(prot_red.conf);	      <
+            //printf("free prot_red\n");		      <
+        						      |
+        for (ic=0;ic<prot_w.nc;ic++) {			      |	        for (ic=0; ic<prot_w.nc; ic++)
+							      >	        {
+            						      |
+            for (j_red=0;j_red<i_red;j_red++) {		      |	            for (j_red=0; j_red<i_red; j_red++)
+							      >	            {
+        for (ic=0;ic<prot.nc;ic++) {			      |	        for (ic=0; ic<prot.nc; ic++)
+							      >	        {
+        						      |
+        //printf("free prot_w, occ_table\n");		      |	        for (ic=0;ic<prot_w.nc;ic++) { free(prot_w.conf[ic]->
+        for (ic=0;ic<prot_w.nc;ic++) free(prot_w.conf[ic]->oc |	        if (prot_w.nc) { free(prot_w.conf); }
+        //printf("free prot_w, conf\n");		      <
+        if (prot_w.nc) free(prot_w.conf);		      <
+    							      |
+    							      |
+    //printf("free prot, occ_table\n");			      |	    for (ic=0; ic<prot.nc; ic++) { free(prot.conf[ic]->occ_ta
+    for (ic=0;ic<prot.nc;ic++) free(prot.conf[ic]->occ_table) |	    if (prot.nc) { free(prot.conf); }
+    //printf("free prot, conf\n");			      <
+    if (prot.nc) free(prot.conf);			      <
+    							      |
+    //printf("free flip_res\n");			      <
+}							      |	}//int monte2()
+PROT monte2_load_conflist(char *fname) {		      |	PROT monte2_load_conflist(char *fname){
+    							      |
+    if (!(fp=fopen(fname, "r"))) {			      |	    if (!(fp=fopen(fname, "r")))
+							      >	    {
+    							      |
+    							      |
+    while(fgets(sbuff, sizeof(sbuff), fp)) {		      |	    while(fgets(sbuff, sizeof(sbuff), fp))
+							      >	    {
+        						      <
+        						      |
+        for (k_res = prot.n_res - 1; k_res >= 0; k_res--) {   |	        for (k_res = prot.n_res - 1; k_res >= 0; k_res--)
+            if (!strcmp(conf.resName, prot.res[k_res].resName |	        {
+                conf.chainID == prot.res[k_res].chainID &&    |	            if ( !strcmp(conf.resName, prot.res[k_res].resNam
+            conf.resSeq  == prot.res[k_res].resSeq  &&	      |	                 conf.chainID == prot.res[k_res].chainID &&
+            conf.iCode   == prot.res[k_res].iCode  )	      |	                 conf.resSeq  == prot.res[k_res].resSeq  &&
+            {						      |	                 conf.iCode   == prot.res[k_res].iCode  )
+                break;					      |	            { break; }
+            }						      <
+        if (k_res == -1) {				      |	        if (k_res == -1)
+							      >	        {
+            						      |
+        						      |
+        if (conf.toggle == 't') prot.res[k_res].conf[k_conf]. |	        if (conf.toggle == 't') { prot.res[k_res].conf[k_conf
+        else if (conf.toggle == 'f') prot.res[k_res].conf[k_c |	        else if (conf.toggle == 'f') { prot.res[k_res].conf[k
+        else if (conf.toggle == 'a') prot.res[k_res].conf[k_c |	        else if (conf.toggle == 'a') { prot.res[k_res].conf[k
+        else prot.res[k_res].conf[k_conf].toggle = 't';	      |	        else { prot.res[k_res].conf[k_conf].toggle = 't'; }
+    							      |
+    for (k_res=0;k_res<prot.n_res;k_res++) {		      |	    for (k_res=0;k_res<prot.n_res;k_res++)
+        for (k_conf=1;k_conf<prot.res[k_res].n_conf;k_conf++) |	    {
+							      >	        for (k_conf=1;k_conf<prot.res[k_res].n_conf;k_conf++)
+							      >	        {
+}							      |	}//PROT monte2_load_conflist(char *fname)
+							      >
+							      >	//%%%%%%%%%%%%%%%%%%%%%%%%%%%
+int monte2_load_pairwise(PROT prot) {			      |	int monte2_load_pairwise(PROT prot)
+							      >	{
+    							      |
+							      >	/* 2014-09-04 >>>>>>>>>>>>>>>>>>> code below from erengies3.c
+							      >
+    							      |
+        						      |
+            sprintf(fname, "%s/%s.opp", STEP3_OUT, prot.conf[ |	            sprintf(fname, "%s/%s.opp", ENERGY_DIR, prot.conf
+        						      |
+        						      |
+                        				      |
+    							      |
+                					      |
+    							      |
+}							      |	}//int monte2_load_pairwise(PROT prot)
+PROT monte2_load_pk1out(char *pk1out, char *dconf2) {	      |	PROT monte2_load_pk1out(char *pk1out, char *dconf2){
+    							      |
+    .   G(unfolded)= -kT Sum(i)(# of ionizable) ln(1 +	      |	    .   G(unfolded)= -kT Sum(i)(# of ionizable) ln(1 + exp(-2
+    .               exp(-2.3gamma(i)(pH-pKsol(i))))	      <
+    . An-Suei Yang and Barry Honig, J.Mol.Biol.(1993), 231, 4 |	    .   An-Suei Yang and Barry Honig, J.Mol.Biol.(1993), 231,
+    . Expand this equation so it applies to 		      |	    . Expand this equation so it applies to residues with mul
+    . residues with multiple protonation/electron states      |	    .   G(unfolded) = -kT * Sum(i_res){ ln( Sum(k_state) { ex
+    .   G(unfolded) = -kT * 				      |	    .                                                        
+    .     Sum(i_res)  { ln( Sum(k_state) { 		      <
+    .     exp(-2.3*gamma_proton(i_res,k_state)*(pH-pKa(i_res) <
+    if (!(fp = fopen(OCC_TABLE, "w"))) {		      |	    if (!(fp = fopen(OCC_TABLE, "w")))
+							      >	    {
+    if (env.titr_type == 'p') {				      |	    if (env.titr_type == 'p')
+							      >	    {
+    else {						      |	    else if (env.titr_type == 'e')
+							      >	    {
+							      >	    else
+							      >	    {
+							      >	        fprintf(fp, " extra        ");
+							      >	        for (i=0; i<n_titra; i++) fprintf(fp, " %5.0f", env.t
+							      >	    }
+    for (ic=0; ic<prot.nc; ic++) {			      |	    for (ic=0; ic<prot.nc; ic++)
+							      >	    {
+        for (i_titra=0; i_titra<n_titra; i_titra++) {	      |	        for (i_titra=0; i_titra<n_titra; i_titra++)
+							      >	        {
+    if (env.titr_type == 'p') {				      |	    if (env.titr_type == 'p')
+							      >	    {
+    else {						      |	    else if (env.titr_type == 'e')
+							      >	    {
+        for (i=0; i<n_titra; i++) fprintf(fp, " %5.0f", env.t |	        for (i=0; i<n_titra; i++) fprintf(fp, " %5.1f", env.t
+							      >	    }
+							      >	    else
+							      >	    {
+							      >	        fprintf(fp, " extra    ");
+							      >	        for (i=0; i<n_titra; i++) fprintf(fp, " %5.1f", env.t
+    for (i_res=0;i_res<prot.n_res;i_res++) {		      |	    for (i_res=0;i_res<prot.n_res;i_res++)
+							      >	    {
+        if (env.monte_print_nonzero) {			      |	        if (env.monte_print_nonzero)
+            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con |	        {
+							      >	            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con
+							      >	            {
+        else {						      |	        else
+							      >	        {
+            for (i_conf=2;i_conf<prot.res[i_res].n_conf;i_con |	            for (i_conf=2;i_conf<prot.res[i_res].n_conf;i_con
+							      >	            {
+        						      |
+        for (i_titra=0; i_titra<n_titra; i_titra++) {	      |	        for (i_titra=0; i_titra<n_titra; i_titra++)
+            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con |	        {
+							      >	            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con
+							      >	            {
+        for (i_titra=0; i_titra<n_titra; i_titra++) {	      |	        for (i_titra=0; i_titra<n_titra; i_titra++)
+							      >	        {
+    for (i_titra=0; i_titra<n_titra; i_titra++) {	      |	    for (i_titra=0; i_titra<n_titra; i_titra++)
+        for (i_res=0;i_res<prot.n_res;i_res++) {	      |	    {
+            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con |	        for (i_res=0;i_res<prot.n_res;i_res++)
+							      >	        {
+							      >	            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con
+							      >	            {
+    							      <
+    for (i_res=0;i_res<prot.n_res;i_res++) {		      |
+        for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_conf++) |	    for (i_res=0;i_res<prot.n_res;i_res++)
+							      >	    {
+							      >	        for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_conf++)
+							      >	        {
+        for (i_titra=0; i_titra<n_titra; i_titra++) {	      |
+							      >	        for (i_titra=0; i_titra<n_titra; i_titra++)
+							      >	        {
+            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con |	            for (i_conf=1;i_conf<prot.res[i_res].n_conf;i_con
+							      >	            {
+    fprintf(fp, "Tot Protn");				      |	    fprintf(fp, "Tot H_ion");
+        						      |
+    ematrix.n = 0;  					      |	    ematrix.n = 0;
+    /* scan conformers to see if all pw were calculated, DISA |	    /* scan conformers to see if all pw were calculated, Debu
+    							      <
+    							      <
+    							      <
+           /* proprocessing 				      |	           /* preprocessing
+    /* DEBUG print pairwise table 			      |	    /* DEBUG print pairwise table
+							      <
+    							      <
+			s->IS[i].Nconfermers++;     // so her |				s->IS[i].Nconformers++;     // so her
+void load_states(RES *r)// to load the ionization states      |	void load_states(RES *r)// to load the ionization states
+{							      <
+							      <
+	int i;						      <
+int j=0;						      <
+float x=0.00;						      <
+							      <
+for(j=0;j<r->num_of_states;j++)				      <
+r->IS[j].totalOCC=0;					      |	   int i, ret;
+}							      |	   int j=0;
+int ret;						      <
+	for(i=1;i< r->n_conf;i++)//loop over all the conferme <
+	{						      <
+ret=exist(r->conf[i],r);				      <
+		if(ret==0)// if this is a new ionizatio state <
+		{					      <
+			ISTATES s;			      <
+			s.totalOCC=0.0;			      <
+			s.Nconfermers=0;		      <
+			s.Nelectrons=r->conf[i].e;//load the  <
+			s.Nprotons=r->conf[i].H; //load the n <
+			s.Nconfermers++;//change the number o <
+			s.totalOCC=r->conf[i].occ;	      <
+			//Console::WriteLine("here");	      <
+			AddToArray(s,r);//add the state to th <
+		}					      |	   for(j=0;j<r->num_of_states;j++)
+              if(ret==2)// if this is a new ionizatio state a |	   {
+		{					      |	      r->IS[j].totalOCC=0;
+                  ISTATES s;				      |	   }
+			s.totalOCC=0.0;			      |
+                     s.Nelectrons=r->conf[i].e=-1;//load the  |	   for(i=1;i< r->n_conf;i++)//loop over all the confermer of 
+			s.Nprotons=r->conf[i].H=-1; //load th |	   {
+			s.Nconfermers++;//change the number o |	      ret=exist(r->conf[i],r);
+			s.totalOCC=r->conf[i].occ;	      |	      if(ret==0)// if this is a new ionizatio state add it to
+			//Console::WriteLine("here");	      |	      {
+			AddToArray(s,r);//add the state to th |		ISTATES s;
+//printf("%d",r->conf[i].H);				      |		s.totalOCC=0.0;
+              }						      |		s.Nconformers=0;
+							      |		s.Nelectrons=r->conf[i].e;//load the number of electr
+	}						      |		s.Nprotons=r->conf[i].H; //load the number of protons
+//for(j=0;j<r->num_of_states;j++)			      |		s.Nconformers++;//change the number of states for thi
+//{							      |		s.totalOCC=r->conf[i].occ;
+//r->IS[j].totalOCC=0;					      |		AddToArray(s,r);//add the state to the array
+//printf("%f",r->IS[j].totalOCC);			      |
+//printf("%d",r->IS[j].totalOCC);			      |	     }
+//}							      |	     if(ret==2)// if this is a new ionizatio state add it to 
+							      >	     {
+							      >	        ISTATES s;
+							      >		s.totalOCC=0.0;
+							      >	        s.Nelectrons=r->conf[i].e=-1;//load the number of ele
+							      >		s.Nprotons=r->conf[i].H=-1; //load the number of prot
+							      >		s.Nconformers++;//change the number of states for thi
+							      >		s.totalOCC=r->conf[i].occ;
+							      >		AddToArray(s,r);//add the state to the array
+							      >	     }
+							      >	   }
+//printf("start");					      |	   int i;
+int i;							      |	   for( i=0;i<p->n_res;i++)//loop all over the whole protein
+int j;							      |	   {
+	for( i=0;i<p->n_res;i++)//loop all over the whole pro |		load_states(&p->res[i]);//load the ionization state f
+	{						      |		loop_residues(p->res[i]);
+		//p->res[i].num_of_states=0;		      |		calculate_correstion(&p->res[i]);
+		//p->res[i].memory_for_states=0;	      |		load_correction_factor(&p->res[i]);//add the correcti
+		load_states(&p->res[i]);//load the ionization |		free(TheArray);
+		loop_residues(p->res[i]);		      |		TheArray=NULL;
+		calculate_correstion(&p->res[i]);	      |	   }
+		load_correction_factor(&p->res[i]);//add the  <
+		free(TheArray);				      <
+ //         for(j=0;j<p->res[i].n_conf;j++)		      <
+//{							      <
+//printf(p->res[i].conf[j].uniqID);			      <
+//printf("  ");						      <
+//printf("%f",p->res[i].conf[j].E_TS);			      <
+//}							      <
+TheArray=NULL;						      <
+	}						      <
+							      <
+//	free(TheArray);	//free the memory		      <

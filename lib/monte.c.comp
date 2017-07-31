@@ -1,0 +1,898 @@
+#include "mcce.h"					      |	// Next 2 lines: to add in order to catch -nan (NotAnumber) e
+							      |	//#include <fenv.h>
+/* normal pw is garanteed to be smaller than 2000. When it is |	//feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+ * represents a value refenced to a clashed pair of conformer |	// See http://stackoverflow.com/questions/14990565/catch-nan-
+ */							      |	// http://www.johndcook.com/blog/IEEE_exceptions_in_cpp/
+/* self energy in prot, prot_free, prot_fixed and copied to c |	#include "mcce.h"
+ * before sampling					      |	//...........................................................
+ * pairwise in pairwise					      <
+ * counter in conflist					      <
+ */							      <
+							      >	 *
+							      >	 * Normal pwise is garanteed to be smaller than 2000. When it
+							      >	 * represents a value refenced to a clashed pair of conformer
+							      >	 *
+							      >	 * self energy in prot, prot_free, prot_fixed and copied to c
+							      >	 * before sampling
+							      >	 * pairwise in pairwise
+							      >	 * counter in conflist
+							      >	 *
+							      >	 * Amended Apr 2014 to implement an 'extra energy' titration 
+							      >	//...........................................................
+							      >
+							      >	#define mev2Kcal 0.0235  // to keep consistent with mfe.py, u
+							      >	#define TINY 1.0E-10
+							      >	#define NMAX 5000
+							      >	// Next 3 lines: math.lib functions to test for nan: (2/23/15
+							      >	//double nan(const char *tagp);
+							      >	//float nanf(const char *tagp);
+							      >	//long double nanl(ocnst char *tagp);
+							      >
+    int *conf;  /* idices of free confs */		      |	    int *conf;  /* indices of free confs */
+    MFE mfe;   // let residue include mfe		      |	    MFE mfe;    /* let residue include mfe */
+/* public variables */					      |	struct STAT {
+							      >	    float a;
+							      >	    float b;
+							      >	    float chi2;
+							      >	};
+							      >
+							      >	/* Public variables */
+float    **pairwise, **pairwise_vdw, **pairwise_ele;	      |	RESIDUE  *free_res, *fixed_res, *all_res, *mfe_res; /* mfe_re
+float    E_base, E_state;				      <
+float    ph, eh;					      <
+int      *state, *state_bak;				      <
+							      <
+RESIDUE  *free_res, *fixed_res, *all_res, *mfe_res; // mfe_re <
+int      n_free, n_fixed, n_all, n_mfe;			      <
+float    E_minimum;					      |	CONFTYPE get_conftype(CONF conf);
+float    **MC_occ;    /* occ of 3 parallel MC */	      |	char **shead;
+							      >
+							      >	int      *state, *state_bak;
+							      >	int      n_free, n_fixed, n_all, n_mfe;
+							      >	int      Nx;       /* number of titration points */
+							      >
+							      >	float    *xp, *yp;   /* titration points */
+							      >	float    **pairwise, **pairwise_vdw, **pairwise_ele;
+							      >	float    E_base, E_state, E_minimum;
+							      >	//...........................................................
+							      >	float    ph, eh, extra; /* extra: energy amount added to self
+							      >	//...........................................................
+							      >	float    **MC_occ;      /* occ of 3 parallel MC */
+float fround3(float x);					      |	/* Functions: */
+int   print_mfe(int i_res, float mfeP, FILE *pK_fp,  FILE *re |	int print_mfe(int i_res, float mfeP, FILE *pK_fp,  FILE *res_
+int   get_mfe(int i_res, int t_point);     		      |	int get_mfe(int i_res, int t_point);
+int   verify_flag();					      |	int verify_flag();
+int   load_pairwise();					      |	int load_pairwise();
+int   load_pairwise_fround3();				      |	int load_pairwise_fround3();
+int   load_pairwise_vdw();				      |	int load_pairwise_vdw();
+void  group_confs();					      <
+float get_base();					      <
+float get_E();						      <
+void  mk_neighbors();					      <
+void MC(int n);						      <
+CONFTYPE get_conftype(CONF conf);			      |
+void update_Sconvergence();				      |	float fround3(float x);
+							      >	float get_base();
+							      >	float get_E();
+char **shead;						      |	float score(float v[]);
+							      >
+							      >	void group_confs();
+							      >	void group_confs();
+							      >	void group_confs();
+							      >	void mk_neighbors();
+							      >	void MC(int n);
+							      >	void dhill(float **p, float *y, int ndim, float ftol, float (
+							      >	void update_Sconvergence();
+							      >	struct STAT fit(float a, float b);
+							      >	//...........................................................
+#define mev2Kcal 0.0235  // to keep consistent with mfe.py, u <
+{  int i, j, k, counter, k_run;				      |	{
+							      >	    int i, j, k, counter, k_run;
+    							      |
+    printf("   Done\n\n"); fflush(stdout);		      |	    printf("   Done\n"); fflush(stdout);
+							      <
+    printf("   Done\n\n");				      |	    printf("   Done\n");
+        printf("   Conformer flags updated due to self consis |	        printf("   Conformer flags updated due to self consis
+        printf("   Done\n\n");				      |	        printf("   Done\n");
+    							      |
+        						      <
+    							      <
+    							      |
+    							      <
+    							      |
+    							      |	    /* Entropy sampling and correction */
+    /* entropy sampling and correction */		      <
+        						      |
+        if (env.titr_type == 'p') ph = env.titr_ph0 + i*env.t |	        extra = env.titr_ex0;  //@@@ Amended for extra titrat
+        else eh = env.titr_eh0 + i*env.titr_ehd;	      |
+        fprintf(fp, "Titration (%dth) at pH = %6.2f Eh = %6.2 |	        if (env.titr_type == 'p') {
+							      >			ph = env.titr_ph0 + i*env.titr_phd;
+							      >		}
+							      >	        else if (env.titr_type == 'e') {
+							      >			eh = env.titr_eh0 + i*env.titr_ehd;
+							      >		}
+							      >		else { extra = env.titr_ex0 + i*env.titr_exd; } //@@@
+							      >
+							      >	        fprintf(fp, "Titration (%dth) at pH = %6.2f,  Eh = %6
+        						      <
+        						      |
+        						      |
+        						      |
+        						      |
+							      >	        {
+        						      <
+        /* DEBUG					      <
+        for (j=0; j<n_free; j++) printf("%03d ", state[j]);   <
+        printf("\n");					      <
+        */						      <
+							      <
+        /* Do annealing */				      <
+        /*						      <
+        fprintf(fp, "Conformer list before reduction: E_base  <
+        for (j=0; j<conflist.n_conf; j++) {		      <
+            fprintf(fp, "%s %c %4.2f self = %8.3f mfe = %8.3f <
+            conflist.conf[j].on,			      <
+            conflist.conf[j].occ,			      <
+            conflist.conf[j].E_self0,			      <
+            conflist.conf[j].E_mfe);			      <
+        fprintf(fp, "\n"); fflush(fp);			      <
+        */						      <
+							      <
+        for (j=0; j<n_free; j++) counter+=free_res[j].n;      |	        for (j=0; j<n_free; j++) { counter+=free_res[j].n; }
+        fprintf(fp, "Done\n\n");			      |
+        						      |	        fprintf(fp, "Done\n");
+        /* memcpy(state_check, state, sizeof(int)*n_free);  D |
+        						      |	        /* Do equilibration */
+        /* Do equalibriation */				      <
+        for (j=0; j<n_free; j++) counter+=free_res[j].n;      |	        for (j=0; j<n_free; j++) { counter+=free_res[j].n; }
+        fprintf(fp, "Doing equalibration ... \n"); fflush(fp) |	        fprintf(fp, "Doing equilibration ... \n"); fflush(fp)
+        fprintf(fp, "Done\n\n");			      |	        fprintf(fp, "Done\n");
+        						      |
+        fprintf(fp, "Reducing conflist ... %d conformers are  |	        fprintf(fp, "Reducing conflist ... %d conformers are 
+        fprintf(fp, "%d free residues from %d residues, after |	        fprintf(fp, "%d free residues from %d residues, after
+        						      |
+        for (k=0; k<Sconverge.n; k++) SconvergeBak.conftype[k |	        for (k=0; k<Sconverge.n; k++) { SconvergeBak.conftype
+             if (enumerate(i) == -1) { /* Non-ANALYTICAL SOLO |	             if (enumerate(i) == -1) { /* Non-ANALYTICAL SOLU
+           						      |
+             for (k=0; k<Sconverge.n; k++) SconvergeBak.conft |	             for (k=0; k<Sconverge.n; k++) { SconvergeBak.con
+          						      <
+           fprintf(fp, "Done, exit at max entropy convergence |	           fprintf(fp, "Done, exit at max entropy convergence
+        						      |
+        						      <
+        /* ANALYTICAL SOLOTION */			      |	        /* ANALYTICAL SOLUTION */
+        if (enumerate(i) == -1) {			      |	        if (enumerate(i) == -1)
+            /*						      |	        {
+            fprintf(fp, "Conformer list after reduction: E_ba <
+            for (j=0; j<conflist.n_conf; j++) {		      <
+                fprintf(fp, "%s %c %4.2f self = %8.3f mfe = % <
+                conflist.conf[j].on,			      <
+                conflist.conf[j].occ,			      <
+                conflist.conf[j].E_self0,		      <
+                conflist.conf[j].E_mfe);		      <
+            }						      <
+            fprintf(fp, "\n"); fflush(fp);		      <
+            */						      <
+            for (j=0; j<n_free; j++) counter+=free_res[j].n;  |	            for (j=0; j<n_free; j++) { counter+=free_res[j].n
+            						      |
+            for (j=0; j<env.monte_runs; j++) {		      |	            for (j=0; j<env.monte_runs; j++)
+							      >	            {
+                    state[k] = free_res[k].conf[rand() / (RAN |	                {
+                					      |	                   state[k] = free_res[k].conf[rand() / (RAND
+							      >			}
+                if (env.monte_nstart * counter) MC(env.monte_ |	                if (env.monte_nstart * counter)
+                					      |	                {
+							      >	                  MC(env.monte_nstart * counter);
+							      >	                }
+                if (N_smp) MC(N_smp);			      |	                if (N_smp)
+                for (k=0; k<conflist.n_conf; k++) {	      |	                {
+							      >	                  MC(N_smp);
+							      >	                }
+							      >	                for (k=0; k<conflist.n_conf; k++)
+							      >	                {
+                fprintf(fp, "Done\n\n");		      |	                fprintf(fp, "Done\n");
+                 /* average -Yifan */			      |	                 /* average Yifan */
+                for (k=0; k<conflist.n_conf; k++) conflist.co |	                for (k=0; k<conflist.n_conf; k++) { conflist.
+                for (k_run=0; k_run<j+1; k_run++) {	      |	                for (k_run=0; k_run<j+1; k_run++)
+                    for (k=0; k<conflist.n_conf; k++) {	      |	                {
+							      >	                    for (k=0; k<conflist.n_conf; k++)
+							      >	                    {
+                if (env.monte_tsx) {			      |	                if (env.monte_tsx)
+							      >	                {
+            						      <
+            for (k=0; k<conflist.n_conf; k++) conflist.conf[k |	            for (k=0; k<conflist.n_conf; k++) { conflist.conf
+            for (j=0; j<env.monte_runs; j++) {		      |	            for (j=0; j<env.monte_runs; j++)
+                for (k=0; k<conflist.n_conf; k++) {	      |	            {
+                    conflist.conf[k].occ +=  MC_occ[j][k]/env |	               for (k=0; k<conflist.n_conf; k++)
+                }					      |	               {
+							      >	                  conflist.conf[k].occ +=  MC_occ[j][k]/env.m
+							      >	               }
+            						      <
+            for (j=0; j<conflist.n_conf; j++) {		      |	            for (j=0; j<conflist.n_conf; j++)
+                t = 0.0;				      |	            {
+                for (k=0; k<env.monte_runs; k++) {	      |	               t = 0.0;
+                    t += (MC_occ[k][j] - conflist.conf[j].occ |	               for (k=0; k<env.monte_runs; k++)
+                }					      |	               {
+                if (env.monte_runs > 1) sigma[j] = sqrt(t/(en |	                  t += (MC_occ[k][j] - conflist.conf[j].occ) 
+                else sigma[j] = 999.00;			      |	               }
+                					      |	               if (env.monte_runs > 1) { sigma[j] = sqrt(t/(e
+                if (sigma_max < sigma[j]) sigma_max = sigma[j |	               else { sigma[j] = 999.00; }
+							      >
+							      >	               if (sigma_max < sigma[j]) { sigma_max = sigma[
+        }    						      |	        }
+        for (j=0; j<env.monte_runs; j++) fprintf(fp, "   mc%0 |	        for (j=0; j<env.monte_runs; j++) { fprintf(fp, "   mc
+            fprintf(fp, "%s   %c %8.3f", conflist.conf[j].uni |	            fprintf(fp, "%s   %c %8.3f", conflist.conf[j].uni
+            conflist.conf[j].on,			      <
+            conflist.conf[j].E_self0);			      <
+        						      |
+  							      <
+    printf("   Done\n\n"); fflush(stdout);		      |	    printf("   Done\n"); fflush(stdout);
+							      <
+        for (i=0; i<env.titr_steps; i++) fprintf(fp, " %5.1f" |	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+    else {						      |	    else if (env.titr_type == 'e') {
+        for (i=0; i<env.titr_steps; i++) fprintf(fp, " %5.0f" |	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+							      >	    }
+							      >	    else { //@@@ Amended for extra titration
+							      >	        fprintf(fp, " extra        ");
+							      >	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+        for (i=0; i<env.titr_steps; i++) fprintf(fp, " %5.1f" |	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+    else {						      |	    else if (env.titr_type == 'e') {
+        for (i=0; i<env.titr_steps; i++) fprintf(fp, " %5.0f" |	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+							      >	    }
+							      >	    else {  //@@@ Amended for extra titration
+							      >	        fprintf(fp, " extra        ");
+							      >	        for (i=0; i<env.titr_steps; i++) { fprintf(fp, " %5.1
+							      <
+    							      <
+    							      <
+    							      <
+    							      <
+    printf("   Done\n\n"); fflush(stdout);		      |	    printf("   Done\n"); fflush(stdout);
+    							      |
+    printf("   Total time on MC: %ld seconds\n\n", timerC-tim |	    printf("   Total time on MC: %ld seconds\n", timerC-timer
+    							      <
+    							      |
+    							      <
+    for (i=0; i<env.monte_runs; i++) {			      |	    for (i=0; i<env.monte_runs; i++) { free(MC_occ[i]); }
+        free(MC_occ[i]);				      <
+    }							      <
+    							      <
+    							      <
+    for (i=0; i<conflist.n_conf; i++)			      |	    for (i=0; i<conflist.n_conf; i++) { free(pairwise[i]); }
+        free(pairwise[i]);				      <
+    							      <
+    for (i=0; i<n_free; i++)				      |	    for (i=0; i<n_free; i++) { free(free_res[i].conf); }
+        free(free_res[i].conf);				      <
+    							      |	    for (i=0; i<n_fixed; i++) { free(fixed_res[i].conf); }
+    for (i=0; i<n_fixed; i++)				      <
+        free(fixed_res[i].conf);			      <
+    							      |	    for (i=0; i<n_all; i++) { free(all_res[i].conf); }
+    for (i=0; i<n_all; i++)				      <
+        free(all_res[i].conf);				      <
+    //free(SconvergeBak.conftype);			      <
+        						      <
+}							      |	}//int monte()
+{  FILE *fp;						      |	{
+							      >	    FILE *fp;
+    							      |
+       							      |
+        conf_temp.uniqID,				      |	                     conf_temp.uniqID,
+        &conf_temp.on,					      |	                     &conf_temp.on,
+        &conf_temp.occ,					      |	                     &conf_temp.occ,
+        &conf_temp.netcrg,				      |	                     &conf_temp.netcrg,
+        &conf_temp.Em,					      |	                     &conf_temp.Em,
+        &conf_temp.pKa,					      |	                     &conf_temp.pKa,
+        &conf_temp.e,					      |	                     &conf_temp.e,
+        &conf_temp.H,					      |	                     &conf_temp.H,
+        &conf_temp.E_vdw0,				      |	                     &conf_temp.E_vdw0,
+        &conf_temp.E_vdw1,				      |	                     &conf_temp.E_vdw1,
+        &conf_temp.E_tors,				      |	                     &conf_temp.E_tors,
+        &conf_temp.E_epol,				      |	                     &conf_temp.E_epol,
+        &conf_temp.E_dsolv,				      |	                     &conf_temp.E_dsolv,
+        &conf_temp.E_extra,				      |	                     &conf_temp.E_extra,
+        conf_temp.history);				      |	                     conf_temp.history);
+							      >	//To add: scaling of E_Extra term?
+        						      |
+            						      |
+}							      |	}//int load_conflist()
+{  PROT old_prot;					      |	{
+							      >	    PROT old_prot;
+    							      <
+    							      <
+    							      |
+}							      |	}//int verify_flag()
+{   int i, j, kc;					      |	{
+							      >	    int i, j, kc;
+    ematrix.n = 0;  					      |	    ematrix.n = 0;
+							      <
+    /* scan conformers to see if all pw were calculated, DISA <
+    for (i=0; i<ematrix.n; i++) {			      <
+        if (!ematrix.conf[i].on && (ematrix.conf[i].uniqID[3] <
+           printf("      Incompleted delphi run, the first pl <
+           return USERERR;				      <
+        }						      <
+    }							      <
+    */							      <
+    							      <
+    							      <
+    							      <
+							      <
+    							      <
+           /*						      <
+           if (ematrix.pw[i][j].vdw > 990. && ematrix.pw[j][i <
+               pairwise[i][j] = pairwise[j][i] = 999.;	      <
+           }						      <
+           else {					      <
+               pairwise[i][j] = pairwise[j][i] = ((ematrix.pw <
+                   +(ematrix.pw[i][j].vdw + ematrix.pw[j][i]. <
+           }						      <
+           */						      <
+           //pairwise[i][j] = fround3(ematrix.pw[i][j].ele) * <
+           /* proprocessing 				      <
+           if ((ematrix.pw[i][j].vdw + ematrix.pw[j][i].vdw)  <
+              pairwise[i][j] = pairwise[j][i] = 999.0;	      <
+           }						      <
+           else {					      <
+              pairwise[i][j] = pairwise[j][i] = ((ematrix.pw[ <
+                                                +(ematrix.pw[ <
+           }						      <
+           */						      <
+        }						      <
+    }							      <
+							      <
+    /* DEBUG print pairwise table 			      <
+    int kr;						      <
+    printf("                ");				      <
+    for (kc=0; kc<conflist.n_conf; kc++) {		      <
+        printf("%16s", conflist.conf[kc].uniqID);	      <
+    }							      <
+    printf("\n");					      <
+    for (kr=0; kr<conflist.n_conf; kr++) {		      <
+        printf("%s ", conflist.conf[kr].uniqID);	      <
+        for (kc=0; kc<conflist.n_conf; kc++) {		      <
+            printf("%16.3f", pairwise[kr][kc]);		      <
+        printf("\n");					      <
+    */							      <
+							      <
+    							      <
+}							      |	}//int load_pairwise()
+    ematrix.n = 0;  					      |	    ematrix.n = 0;
+    							      <
+    							      <
+}							      |	}//int load_pairwise_vdw()
+{  int  kr, kc;						      |	{
+							      >	    int  kr, kc;
+    							      |
+							      <
+    							      <
+    							      <
+    							      <
+    							      <
+    							      <
+            /*						      <
+            printf("%s, %c, %f\n", conflist.conf[all_res[kr]. <
+            conflist.conf[all_res[kr].conf[kc]].on,	      <
+            conflist.conf[all_res[kr].conf[kc]].occ);	      <
+            */						      <
+            						      <
+            						      |
+    							      <
+}							      |	}//void group_confs()
+{  float E;						      |	{
+							      >	    float E;
+    							      |
+    							      |
+    for (kc=0; kc<conflist.n_conf; kc++) {		      |	    for (kc=0; kc<conflist.n_conf; kc++)
+							      >	    {
+    							      <
+    for (kc=0; kc<conflist.n_conf; kc++) {		      |	    for (kc=0; kc<conflist.n_conf; kc++)
+							      >	    {
+        + conflist.conf[kc].E_vdw1			      |	                                    + conflist.conf[kc].E_vdw
+        + conflist.conf[kc].E_epol			      |	                                    + conflist.conf[kc].E_epo
+        + conflist.conf[kc].E_tors			      |	                                    + conflist.conf[kc].E_tor
+        + conflist.conf[kc].E_dsolv			      |	                                    + conflist.conf[kc].E_dso
+        + conflist.conf[kc].E_extra			      |	                                    + conflist.conf[kc].E_ext
+        + conflist.conf[kc].E_ph			      |	                                    + conflist.conf[kc].E_ph
+        + conflist.conf[kc].E_eh			      |	                                    + conflist.conf[kc].E_eh
+        + conflist.conf[kc].E_TS; /* Monte Carlo "knows" entr |	                                    + conflist.conf[kc].E_TS;
+/*        if (conflist.conf[kc].E_self0 > 900.0)	      |
+           conflist.conf[kc].E_self0 = 999.0;		      |	        // "extra" from Extra titration added to all DM confo
+*/							      |	        if (!strncmp(conflist.conf[kc].uniqID+3, "DM", 2)) co
+    							      <
+    for (ir=0; ir<n_fixed; ir++) {			      |	    for (ir=0; ir<n_fixed; ir++)
+        for (kr=ir+1; kr<n_fixed; kr++) {		      |	    {
+            for (ic=0; ic<fixed_res[ir].n; ic++) {	      |	        for (kr=ir+1; kr<n_fixed; kr++)
+                for (kc=0; kc<fixed_res[kr].n; kc++) {	      |	        {
+							      >	            for (ic=0; ic<fixed_res[ir].n; ic++)
+							      >	            {
+							      >	                for (kc=0; kc<fixed_res[kr].n; kc++)
+							      >	                {
+                    *conflist.conf[fixed_res[ir].conf[ic]].oc |	                        * conflist.conf[fixed_res[ir].conf[ic
+                    *conflist.conf[fixed_res[kr].conf[kc]].oc |	                        * conflist.conf[fixed_res[kr].conf[kc
+    							      <
+}							      |	}//float get_base()
+							      <
+{  float E = 0.0;					      |	{
+							      >	    float E = 0.0;
+    							      <
+    for (kr=0; kr<n_free; kr++) E += conflist.conf[state[kr]] |	    for (kr=0; kr<n_free; kr++) { E += conflist.conf[state[kr
+    for (kr=0; kr<n_free; kr++) {			      |	    for (kr=0; kr<n_free; kr++)
+							      >	    {
+    							      <
+}							      |	}//float get_E()
+{  int kr, ir, kc, ic;					      |	{
+							      >	    int kr, ir, kc, ic;
+    							      |
+    /* here */						      <
+    							      |
+}							      |	}//void mk_neighbors()
+							      <
+{  int cycles, n_total, n_cycle;			      |	{
+							      >	    int cycles, n_total, n_cycle;
+    if (env.monte_trace > 0) {				      |	    if (env.monte_trace > 0)
+							      >	    {
+    else {						      |	    else
+							      >	    {
+    for (i=0; i<conflist.n_conf; i++) conflist.conf[i].counte |	    for (i=0; i<conflist.n_conf; i++) { conflist.conf[i].coun
+    for (i=0; i<cycles; i++) {				      |	    for (i=0; i<cycles; i++)
+        /*						      |	    {
+        fprintf(fp, "Step %10d, E_minimum = %10.2f, E_running <
+        i*n_cycle, E_minimum+E_base, E_state+E_base, get_E()+ <
+        */						      <
+        while (iters) {					      |	        while (iters)
+							      >	        {
+            while (1) {					      |	            while (1)
+							      >	            {
+            for (j=0; j<n_free; j++) {			      |	            for (j=0; j<n_free; j++)
+							      >	            {
+            if (rand() & 1) {   /* do multiple flip if odd nu |	            if (rand() & 1)
+                if (biglist[ires].n) {			      |	            {   /* do multiple flip if odd number */
+							      >	                if (biglist[ires].n)
+							      >	                {
+                    for (k=1; k<nflips; k++) {		      |	                    for (k=1; k<nflips; k++)
+                        				      |	                    {
+                        for (j=0; j<n_free; j++) {	      |	                        for (j=0; j<n_free; j++)
+							      >	                        {
+							      |	            if (E_minimum > E_state) { E_minimum = E_state; }
+							      <
+            /* DEBUG					      <
+            for (j=0; j<n_free; j++) printf("%03d ", state[j] <
+            printf("\n");				      <
+            */						      <
+							      <
+            if (E_minimum > E_state) E_minimum = E_state;     <
+            /*<<< Boltman distribution >>>*/		      |	            /*<<< Boltzmann distribution >>>*/
+            else {                                            |	            else
+							      >	            {                                              /*
+							      <
+            /*						      <
+            if (!memcmp(state, state_check, sizeof(int)*n)) { <
+                printf("E=%12.5f\n", E_state);		      <
+            }  DEBUG */					      <
+							      <
+            for (j=0; j<n_free; j++) {			      |	            for (j=0; j<n_free; j++)
+							      >	            {
+            						      <
+    for (i=0; i<conflist.n_conf; i++) {			      |	    for (i=0; i<conflist.n_conf; i++)
+							      >	    {
+}							      |	}//void MC(int n)
+{  int i, j, t;						      |	{
+							      >	    int i, j, t;
+    for (i=0; i<n_free; i++) {				      |	    for (i=0; i<n_free; i++)
+							      >	    {
+        for (j=0; j<free_res[i].n; j++) {		      |	        for (j=0; j<free_res[i].n; j++)
+							      >	        {
+    							      <
+}							      |	}//int reduce_conflist()
+							      <
+							      <
+int Nx;       /* number of titration points */		      <
+float *xp, *yp;   /* titration points */		      <
+							      <
+struct STAT {						      <
+    float a;						      <
+    float b;						      <
+    float chi2;						      <
+};							      <
+							      <
+struct STAT fit(float a, float b);			      <
+float score(float v[]);					      <
+void dhill(float **p, float *y, int ndim, float ftol, float ( <
+{  int i, j;						      |	{
+							      >	    int i, j;
+    struct STAT stat;	/* a structure of statistcs */	      |	    struct STAT stat;	  // a structure of statistcs //
+    char **head, **mhead;  // add mhead for mfe header	      |	    char **head, **mhead; // add mhead for mfe header
+    float *netcrg;					      |	    float *netcrg;        // reinstated 2/15; was removed due
+							      >
+    for (i=0; i<Nx; i++) {				      |	    for (i=0; i<Nx; i++)
+        if (env.titr_type == 'p') xp[i] = env.titr_ph0 + i*en |	    {
+        else  xp[i] = env.titr_eh0 + i*env.titr_ehd;	      |	        if (env.titr_type == 'p')       xp[i] = env.titr_ph0 
+							      >	        else if (env.titr_type == 'e')  xp[i] =  env.titr_eh0
+							      >	        else  xp[i] = env.titr_ex0 + i*env.titr_exd;   //Amen
+    netcrg = (float *) malloc(conflist.n_conf*sizeof(float)); |
+							      >	    netcrg = (float *) malloc(conflist.n_conf*sizeof(float));
+    							      |
+          						      |
+   // load the pairwise interaction again, round the ele and  |	   // load the pairwise interaction again, round the ele and 
+ 							      <
+    for (i=0; i<n_mfe; i++) { 				      |	    for (i=0; i<n_mfe; i++) {
+                                                      + confl |	                                                      + confl
+                                                      + confl |	                                                      + confl
+                                                      + confl |	                                                      + confl
+    if ((fp = fopen("sum_crg.out", "w")) == NULL) {	      |	    if ((fp = fopen("sum_crg.out", "w")) == NULL)
+							      >	    {
+    if (env.titr_type == 'p') {   /* pH titration */	      |	    if (env.titr_type == 'p')
+							      >	    {   /* pH titration */
+    else {      /* Eh titration assumed */		      |	    else if (env.titr_type == 'e')
+        fprintf(fp, "  Eh      ");			      |	    {
+							      >	        fprintf(fp, "  eh      ");
+							      >	    }
+							      >	    else
+							      >	    {      /* extra titration assumed */ //Amended for extra
+							      >	        fprintf(fp, "  extra   ");
+    for(i=0; i<N_res; i++) {				      |	    for(i=0; i<N_res; i++)
+							      >	    {
+        n_crg = n_protons-n_electrons; 			      |	        n_crg = n_protons-n_electrons;
+        						      |
+        						      |
+        for(j=0; j<Nx; j++) {				      |	        for(j=0; j<Nx; j++)
+							      >	        {
+            for (k=0; k<n_all; k++) {			      |	            for (k=0; k<n_all; k++)
+							      >	            {
+            }    					      |	            }
+    if (env.titr_type == 'p') {   /* pH titration */	      |	    if (env.titr_type == 'p')
+							      >	    {   /* pH titration */
+    else {      /* Eh titration assumed */		      |	    else if (env.titr_type == 'e')
+							      >	    {   /* eH titration */
+							      >	    else
+							      >	    {     // extra titration assumed  //Amended for extra
+							      >	        fprintf(fp, "  Extra   ");
+							      >	    }
+            /*else {                           /* all < 0.015 |	            else {    // assume either all the yp >0.985 or a
+               //fprintf(fp, "%s          pKa or Em out of ra <
+	   /* 	if (yp[0] > yp[Nx-1]) {			      <
+                    fprintf(fp, "%s        pKa/Em more than % <
+                    i_low=i_high=Nx-1;			      <
+                }					      <
+                else if (yp[0] < yp[Nx-1]) {		      <
+                    fprintf(fp, "%s        pKa/Em less than % <
+                    i_low=i_high=0;			      <
+                }					      <
+                else {					      <
+                    strncpy(sbuff, shead[i], 3); sbuff[3] = ' <
+                    if (!strcmp(sbuff, "TYR") || !strcmp(sbuf <
+                        if (yp[0] == 1.0) {		      <
+                            fprintf(fp, "%s        pKa/Em les <
+                            i_low=i_high=0;		      <
+                        }				      <
+                        else {				      <
+                            fprintf(fp, "%s        pKa/Em mor <
+                            i_low=i_high=Nx-1;		      <
+                        }				      <
+                    }					      <
+                    else {				      <
+                        if (yp[0] == 1.0) {		      <
+                            fprintf(fp, "%s        pKa/Em mor <
+                            i_low=i_high=Nx-1;		      <
+                        }				      <
+                        else {				      <
+                             fprintf(fp, "%s        pKa/Em le <
+                             i_low=i_high=0;		      <
+                        }				      <
+                    }					      <
+	        } 					      <
+	    }*/						      <
+                  					      <
+            else {    // assume either all the yp >0.985 or a <
+            }            				      |	            }
+         //   fprintf(fp, "				      <
+        /* printf("a=%.3f; b=%.3f\n",a,b); */		      <
+							      |		//8.617342E-2  = Boltzmann_cst * keV/K (10^3 eV/K)
+        if (env.titr_type == 'p') n = fabs(stat.a * 8.617342E |	        if (env.titr_type == 'p' || env.titr_type == 'x') n =
+        else if (env.titr_type == 'e') n = fabs(stat.a * 8.61 |	        else n = fabs(stat.a * 8.617342E-2 * env.monte_temp);
+        else n = stat.a;				      <
+							      <
+        print_mfe(i, mfePoint, fp, blist_fp); 		      |	        print_mfe(i, mfePoint, fp, blist_fp);
+    }     						      |	    }
+							      <
+    							      |
+}							      |	}//int fitit()
+							      >	    if (strcmp(sbuff, "-0.000") == 0) strcpy(sbuff, "0.000");
+//    if (x>0.0000001) return (int)(x*1000+0.5)/1000.0;	      <
+//    if (x<-0.0000001) return -(int)(-x*1000+0.5)/1000.0;    <
+//    else return 0.000;				      <
+							      |	}//float fround3(float x)
+}							      <
+{   int i, j, kc;					      |	{
+							      >	    int i, j, kc;
+    ematrix.n = 0;  					      |	    ematrix.n = 0;
+    							      <
+    } 							      |	    }
+    							      |
+    							      <
+          // pairwise[i][j] = pairwise[j][i] = ((ematrix.pw[i <
+          //                                 +(ematrix.pw[i][ <
+          // if (ematrix.pw[i][j].vdw > 998.0) pairwise[i][j] <
+}							      |	}//int load_pairwise_fround3()
+    							      <
+    // if (cut_off < 0.0000) cut_off = 0.5;		      |	    // if (cut_off < 0.0000) cut_off = 0.5;    // xuyu commen
+    // xuyu commented it, 8/11				      <
+        get_mfe(i_res, i_low); 				      |	        get_mfe(i_res, i_low);
+        if (env.titr_type == 'p') 			      |
+            fprintf(pK_fp, "  %8.2f%8.2f%8.2f%8.2f%8.2f%8.2f% |	        //@@@ Amended for extra:
+                   mfe_res[i_res].mfe.vdw0/PH2KCAL, 	      |	        if ( (env.titr_type == 'p')||(env.titr_type == 'x') )
+                   mfe_res[i_res].mfe.vdw1/PH2KCAL, 	      |	            fprintf(pK_fp, "  %8.2f%8.2f%8.2f%8.2f%8.2f%8.2f%
+                   mfe_res[i_res].mfe.tors/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.vdw0/PH2KCAL,
+                   mfe_res[i_res].mfe.ebkb/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.vdw1/PH2KCAL,
+                   mfe_res[i_res].mfe.dsol/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.tors/PH2KCAL,
+                   mfe_res[i_res].mfe.offset/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.ebkb/PH2KCAL,
+                   mfe_res[i_res].mfe.pHpK0/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.dsol/PH2KCAL,
+                   mfe_res[i_res].mfe.EhEm0/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.offset/PH2KCAL,
+                   mfe_res[i_res].mfe.TS/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.pHpK0/PH2KCAL,
+                   mfe_res[i_res].mfe.residues/PH2KCAL,       |	                   mfe_res[i_res].mfe.EhEm0/PH2KCAL,
+							      >	                   mfe_res[i_res].mfe.TS/PH2KCAL,
+							      >	                   mfe_res[i_res].mfe.residues/PH2KCAL,
+        else 						      |	        }
+            fprintf(pK_fp, "  %8.1f%8.1f%8.1f%8.1f%8.1f%8.1f% |	        else {
+                   mfe_res[i_res].mfe.vdw0/mev2Kcal, 	      |	              fprintf(pK_fp, "  %8.1f%8.1f%8.1f%8.1f%8.1f%8.1
+                   mfe_res[i_res].mfe.vdw1/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.vdw0/mev2Kcal,
+                   mfe_res[i_res].mfe.tors/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.vdw1/mev2Kcal,
+                   mfe_res[i_res].mfe.ebkb/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.tors/mev2Kcal,
+                   mfe_res[i_res].mfe.dsol/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.ebkb/mev2Kcal,
+                   mfe_res[i_res].mfe.offset/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.dsol/mev2Kcal,
+                   mfe_res[i_res].mfe.pHpK0/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.offset/mev2Kcal,
+                   mfe_res[i_res].mfe.EhEm0/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.pHpK0/mev2Kcal,
+                   mfe_res[i_res].mfe.TS/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.EhEm0/mev2Kcal,
+                   mfe_res[i_res].mfe.residues/mev2Kcal,      |	                   mfe_res[i_res].mfe.TS/mev2Kcal,
+							      >	                   mfe_res[i_res].mfe.residues/mev2Kcal,
+							      >	 	}
+        for (j=0; j<n_all; j++) {			      |	        for (j=0; j<n_all; j++)
+							      >	        {
+            if (env.titr_type == 'p') 			      |
+                fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2 |	            if ( (env.titr_type == 'p')||(env.titr_type == 'x
+                mfe_res[i_res].mfe.vdw[j]/PH2KCAL, mfe_res[i_ |	                fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2
+							      >	                        mfe_res[i_res].mfe.vdw[j]/PH2KCAL, mf
+							      >	            }
+                fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2 |	            {
+                mfe_res[i_res].mfe.vdw[j]/mev2Kcal, mfe_res[i |	                fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2
+							      >	                        mfe_res[i_res].mfe.vdw[j]/mev2Kcal, m
+							      >	            }
+        for (k=0; k<n_all; k++) {			      |	        for (k=0; k<n_all; k++)
+            old_mfe.mfe.mfePair[k] = mfe_res[i_res].mfe.mfePa |	        {
+            old_mfe.mfe.vdw[k] = mfe_res[i_res].mfe.vdw[k];   |	            old_mfe.mfe.mfePair[k] = mfe_res[i_res].mfe.mfePa
+            old_mfe.mfe.ele[k] = mfe_res[i_res].mfe.ele[k];   |	            old_mfe.mfe.vdw[k] = mfe_res[i_res].mfe.vdw[k];
+							      >	            old_mfe.mfe.ele[k] = mfe_res[i_res].mfe.ele[k];
+ 							      |
+        if (env.titr_type == 'p') 			      |	        if ( (env.titr_type == 'p')||(env.titr_type == 'x') )
+            fprintf(pK_fp, "  %8.2f%8.2f%8.2f%8.2f%8.2f%8.2f% |	            fprintf(pK_fp, "  %8.2f%8.2f%8.2f%8.2f%8.2f%8.2f%
+                   mfe_res[i_res].mfe.vdw0/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.vdw0/PH2KCAL,
+                   mfe_res[i_res].mfe.vdw1/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.vdw1/PH2KCAL,
+                   mfe_res[i_res].mfe.tors/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.tors/PH2KCAL,
+                   mfe_res[i_res].mfe.ebkb/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.ebkb/PH2KCAL,
+                   mfe_res[i_res].mfe.dsol/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.dsol/PH2KCAL,
+                   mfe_res[i_res].mfe.offset/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.offset/PH2KCAL,
+                   mfe_res[i_res].mfe.pHpK0/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.pHpK0/PH2KCAL,
+                   mfe_res[i_res].mfe.EhEm0/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.EhEm0/PH2KCAL,
+                   mfe_res[i_res].mfe.TS/PH2KCAL, 	      |	                   mfe_res[i_res].mfe.TS/PH2KCAL,
+                   mfe_res[i_res].mfe.residues/PH2KCAL,       |	                   mfe_res[i_res].mfe.residues/PH2KCAL,
+        else 						      |		}
+            fprintf(pK_fp, "  %8.1f%8.1f%8.1f%8.1f%8.1f%8.1f% |	        else
+                   mfe_res[i_res].mfe.vdw0/mev2Kcal, 	      |	        {
+                   mfe_res[i_res].mfe.vdw1/mev2Kcal, 	      |	              fprintf(pK_fp, "  %8.1f%8.1f%8.1f%8.1f%8.1f%8.1
+                   mfe_res[i_res].mfe.tors/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.vdw0/mev2Kcal,
+                   mfe_res[i_res].mfe.ebkb/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.vdw1/mev2Kcal,
+                   mfe_res[i_res].mfe.dsol/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.tors/mev2Kcal,
+                   mfe_res[i_res].mfe.offset/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.ebkb/mev2Kcal,
+                   mfe_res[i_res].mfe.pHpK0/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.dsol/mev2Kcal,
+                   mfe_res[i_res].mfe.EhEm0/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.offset/mev2Kcal,
+                   mfe_res[i_res].mfe.TS/mev2Kcal, 	      |	                   mfe_res[i_res].mfe.pHpK0/mev2Kcal,
+                   mfe_res[i_res].mfe.residues/mev2Kcal,      |	                   mfe_res[i_res].mfe.EhEm0/mev2Kcal,
+							      >	                   mfe_res[i_res].mfe.TS/mev2Kcal,
+							      >	                   mfe_res[i_res].mfe.residues/mev2Kcal,
+							      |		}
+        for (j=0; j<n_all; j++) {			      |		for (j=0; j<n_all; j++)
+            head1[0]='\0'; head2[0]='\0';		      |	        {
+            if (fabs(mfe_res[i_res].mfe.mfePair[j]) < cut_off |	           head1[0]='\0'; head2[0]='\0';
+            strcpy(head1, shead[i_res]);		      |
+            strncpy(head2, conflist.conf[all_res[j].conf[0]]. |	           if (fabs(mfe_res[i_res].mfe.mfePair[j]) < cut_off)
+            strncat(head2, conflist.conf[all_res[j].conf[0]]. |
+            if (env.titr_type == 'p') 			      |	           strcpy(head1, shead[i_res]);
+                fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2 |	           strncpy(head2, conflist.conf[all_res[j].conf[0]].u
+                       mfe_res[i_res].mfe.vdw[j]/PH2KCAL, mfe |	           strncat(head2, conflist.conf[all_res[j].conf[0]].u
+                       (all_res[j].mfe.crg[i_low]*(1-ratio) + |
+            else					      |		   if ( (env.titr_type == 'p')||(env.titr_type == 'x'
+                fprintf(res_fp, "%s  %s   %8.1f%8.1f%8.1f%8.2 |	              fprintf(res_fp, "%s  %s   %8.2f%8.2f%8.2f%8.2f\
+                       mfe_res[i_res].mfe.vdw[j]/mev2Kcal, mf |	                      mfe_res[i_res].mfe.vdw[j]/PH2KCAL, mfe_
+							      >	                      (all_res[j].mfe.crg[i_low]*(1-ratio) + 
+							      >	           }
+							      >	           else
+							      >	           {
+							      >	                fprintf(res_fp, "%s  %s   %8.1f%8.1f%8.1f%8.2
+							      >	                       mfe_res[i_res].mfe.vdw[j]/mev2Kcal, mf
+							      >		   }
+}							      |	}//int print_mfe(int i_res, float mfeP, FILE *pK_fp, FILE *re
+          						      |
+    float ph, eh;					      |	    float ph, eh, ex;
+    if (env.titr_type == 'p') ph = env.titr_ph0 + t_point*env |	    ex = env.titr_ex0;
+    else eh = env.titr_eh0 + t_point*env.titr_ehd;	      <
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    if (env.titr_type == 'p')
+        if (!(strncmp(conflist.conf[mfe_res[i_res].conf[j]].u |	    {
+							      >	       ph = env.titr_ph0 + t_point*env.titr_phd;
+							      >	    }
+							      >	    else if (env.titr_type == 'e')
+							      >	    {
+							      >	       eh = env.titr_eh0 + t_point*env.titr_ehd;
+							      >	    }
+							      >	    else
+							      >	    {
+							      >	       ex = env.titr_ex0 + t_point*env.titr_exd;  //@@@ Amend
+							      >	    }
+							      >
+							      >	    for (j=0; j<mfe_res[i_res].n; j++)
+							      >	    {
+							      >	        if (!(strncmp(conflist.conf[mfe_res[i_res].conf[j]].u
+							      >	        {  // dummy conformer
+                mfe[j] += pairwise[mfe_res[i_res].conf[j]][co |	        {
+							      |	            mfe[j] += pairwise[mfe_res[i_res].conf[j]][confli
+							      >	        }
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    for (j=0; j<mfe_res[i_res].n; j++)
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] = |	    {
+							      >	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] =
+							      >	        {
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    for (j=0; j<mfe_res[i_res].n; j++)
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] ! |	    {
+							      >	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] !
+							      >	        {
+    							      |	    /* get Eref for ground and ionized state */
+      /* get Eref for ground and ionized state */	      |	    /* if there is only one kind of conformer, this may be a 
+      /* if there is only one kind of conformer, this may be  |	    for (j=0; j<mfe_res[i_res].n; j++)
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    {
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] = |	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] =
+            if (Eref[0] > conflist.conf[mfe_res[i_res].conf[j |	        {
+							      >	            if (Eref[0] > conflist.conf[mfe_res[i_res].conf[j
+        else {						      |	        else
+							      >	        {
+							      |	    for (j=0; j<mfe_res[i_res].n; j++)
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    {
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] = |	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] =
+							      >	        {
+        else {						      |	        else
+							      >	        {
+							      |	    for (j=0; j<mfe_res[i_res].n; j++)
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    {
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] = |	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] =
+        else socc[1] += rocc[j];			      |	        else { socc[1] += rocc[j]; }
+    }							      |	    }
+							      |	    for (j=0; j<mfe_res[i_res].n; j++)
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	    {
+        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] = |	        if (conflist.conf[mfe_res[i_res].conf[j]].uniqID[3] =
+            nocc[j] = rocc[j]/socc[0];			      |	        {
+        }						      |	           nocc[j] = rocc[j]/socc[0];
+        else {						      |	        }
+            nocc[j] = rocc[j]/socc[1];			      |	        else { nocc[j] = rocc[j]/socc[1]; }
+        }						      |	    }
+    }							      |	    for (j=0; j<mfe_res[i_res].n; j++)
+							      |	    {
+							      |	        if (strchr(conflist.conf[mfe_res[i_res].conf[j]].uniq
+    for (j=0; j<mfe_res[i_res].n; j++) {		      |	        {
+        if (strchr(conflist.conf[mfe_res[i_res].conf[j]].uniq |	            E_ionize.vdw0 += nocc[j] * conflist.conf[mfe_res[
+            E_ionize.vdw0 += nocc[j] * conflist.conf[mfe_res[ |	            E_ionize.vdw1 += nocc[j] * conflist.conf[mfe_res[
+            E_ionize.vdw1 += nocc[j] * conflist.conf[mfe_res[ |	            E_ionize.ebkb += nocc[j] * conflist.conf[mfe_res[
+            E_ionize.ebkb += nocc[j] * conflist.conf[mfe_res[ |	            E_ionize.tors += nocc[j] * conflist.conf[mfe_res[
+            E_ionize.tors += nocc[j] * conflist.conf[mfe_res[ |	            E_ionize.dsol += nocc[j] * conflist.conf[mfe_res[
+            E_ionize.dsol += nocc[j] * conflist.conf[mfe_res[ |	            E_ionize.offset += nocc[j] * conflist.conf[mfe_re
+            E_ionize.offset += nocc[j] * conflist.conf[mfe_re |	            E_ionize.pHpK0 += nocc[j] * conflist.conf[mfe_res
+            E_ionize.pHpK0 += nocc[j] * conflist.conf[mfe_res |	            E_ionize.EhEm0 += nocc[j] * conflist.conf[mfe_res
+            E_ionize.EhEm0 += nocc[j] * conflist.conf[mfe_res <
+            E_ionize.residues += nocc[j] * mfe[j];            |	            E_ionize.residues += nocc[j] * mfe[j];
+            						      |
+            for (k=0; k<n_all; k++) {			      |
+                for (q=0; q<all_res[k].n; q++) {	      |	            for (k=0; k<n_all; k++)
+							      >	            {
+							      >	                for (q=0; q<all_res[k].n; q++)
+							      >	                {
+        else {						      |	        else
+            E_ground.vdw0 += nocc[j] * conflist.conf[mfe_res[ |	        {
+							      >	            E_ground.vdw0 += nocc[j] * conflist.conf[mfe_res[
+            if (nocc[j] > 0.000001) E_ground.TS += nocc[j] *  |
+            E_ground.residues += nocc[j] * mfe[j];            |	            if (nocc[j] > 0.000001) { E_ground.TS += nocc[j] 
+							      >	            E_ground.residues += nocc[j] * mfe[j];
+            for (k=0; k<n_all; k++) {			      |	            for (k=0; k<n_all; k++)
+                for (q=0; q<all_res[k].n; q++) {	      |	            {
+							      >	                for (q=0; q<all_res[k].n; q++)
+							      >	                {
+        } 						      |	        }
+    for (j=0; j<n_all; j++) {				      |	    for (j=0; j<n_all; j++)
+							      >	    {
+}							      |	}//int get_mfe(int i_res, int t_point)
+/* initialize the simplex and set up optimization */	      |	{
+{  float **p;						      |	    /* initialize the simplex and set up optimization */
+							      >	    float **p;
+    							      |
+    							      |
+    							      |
+    							      |
+    /* DEBUG						      <
+    printf("(%8.3f%8.3f)=%8.3f exit at %d\n", p[0][0], p[0][1 <
+    */							      <
+    							      <
+    							      <
+    							      |
+    							      <
+}							      |	}//struct STAT fit(float a, float b)
+							      <
+{  float S = 0.0;					      |	{
+							      >	    float S = 0.0;
+    							      |
+    							      <
+}							      |	}//float score(float v[])
+							      <
+#define TINY 1.0E-10					      <
+#define NMAX 5000					      <
+                 					      |
+    							      |
+    							      <
+    							      |
+        						      <
+        /* DEBUG					      <
+        for (i=0; i<mpts; i++) {			      <
+            printf("%8.3f at (%8.3f, %8.3f)\n", y[i], p[i][0] <
+        }						      <
+        printf("\n");					      <
+        */						      <
+        						      <
+        						      |
+        						      <
+        						      <
+        						      |
+}							      |	}//void dhill(float **p, float *y, int ndim, float ftol, floa
+    							      |
+}							      |	}//float dhtry(float **p, float *y, float *psum, int ndim, fl
+    							      |
+    							      |
+    							      |
+    							      |	    fprintf(fp, "%ld <= %d microstates, will use analytical s
+    fprintf(fp, "%ld <= %d microstates, will use analytical s <
+    							      |
+    							      |
+    							      |
+            						      |
+            						      |
+        						      |
+        						      |
+    							      |
+    							      |
+    							      <
+        						      |
+    							      <
+            						      <
+        						      |
+    							      <
+    							      <
+}							      |	}//int enumerate(int i_ph_eh)
+{  int i;						      |	{
+							      >	   int i;
+   							      |
+   							      |
+}							      |	}//int group_conftype()
+{  if (!strcmp(t1.resName, t2.resName) && \		      |	{
+							      >	  if (!strcmp(t1.resName, t2.resName) && \
+}							      |	}//int cmp_conftype(CONFTYPE t1, CONFTYPE t2)
+{  CONFTYPE typeid;					      |	{
+							      >	   CONFTYPE typeid;
+}							      |	}//CONFTYPE get_conftype(CONF conf)
+/* This function actually computes the entropy of each comfor |	{
+{  int i, pstart, pend;					      |	   /* This function actually computes the entropy of each com
+							      >	   int i, pstart, pend;
+      /* Have done that in get_entropy */		      <
+      /* for (j=pstart; j<pend; j++) conflist.conf[j].E_TS =  <
+							      <
+}							      |	}//void update_Sconvergence()
+/* This function returns the maximum difference of Sconvergen |	{
+{  int i;						      |	   /* This function returns the maximum difference of Sconver
+							      >	   int i;
+   							      |
+}							      |	}//float s_stat()
+{  int i;						      |	{
+							      >	   int i;
+   							      |
+}							      |	}//float get_entropy(int iconf, int start, int end)

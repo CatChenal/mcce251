@@ -1,0 +1,2 @@
+ sed -ie '/^gcc/d; /^r - /d; /^ar rvs mcce.a/d' make.log
+

@@ -1,0 +1,112 @@
+MCCE CONFIGURATION FILE
+   This file must have name "run.prm" in the working directory. The first
+   field of control line is the value, and last string with parenthesis is
+   the key. Entries marked with * should be configured with your run.
+
+   You need this configure file in your working directory.
+   You need to point out a pdb file to work on.
+   You need to point parameter directory to the right position.
+   You need "rename" file to convert residue names, and split cofactors.
+
+   The mcce excutable on sibyl is at /home/mcce/mcce_alpha/mcce
+
+Input and Output:
+2cua_a.pdb                                                  (INPDB)*
+/Users/yfsong/Documents/develop/ongoing/mcce/source/mcce_alpha/param   (PARAM)*
+debug.log                                                   (DEBUG_LOG)
+new.tpl     local parameter file for unrecognized res       (NEWTPL)
+
+Steps:
+f        step 1: pre-run, pdb-> mcce pdb                    (DO_PREMCCE)*
+f        step 2: make rotatmers                             (DO_ROTAMERS)*
+f        step 3: do energy calculations                     (DO_ENERGY)*
+t        step 4: monte carlo sampling                       (DO_MONTE)*
+
+
+Options common to all steps:
+1.7      defalut van der Waals radius, for SAS              (DEFAULT_RADIUS)
+0.5      factor to 1-4 LJ potontial (1.0 is full)           (FACTOR_14LJ)
+4.0      dielectric constant for Coulomb's law              (EPSILON_COLUMB)
+
+Options specific to each step:
+
+step 1:
+name.txt MCCE renaming rule.          (RENAME_RULES)*
+t        Label terminal residues?                           (TERMINALS)
+2.0      distance limit of reporting clashes                (CLASH_DISTANCE)
+0.2      cut off water if % SAS exceeds this number         (H2O_SASCUTOFF)
+
+step 2:
+t        Do rotate?                                         (PACK)
+f        Do swing?                                          (SWING)
+6        number of rotamers in a bond rotation              (ROTATIONS)
+10.0     phi in degrees of swing                            (PHI_SWING)
+0.5      SAS Threshold of deleting rotamers                 (SAS_CUTOFF)
+10.0     Cutoff of self vdw in kcal/mol                     (VDW_CUTOFF)
+2000     number of repacks                                  (REPACKS)
+0.001    occupancy cutoff of repacks                        (REPACK_CUTOFF)
+52       maximum number of conformer per residue ( 0=unlimited ) (NCONF_LIMIT)
+f        Do relaxation on water                             (RELAX_WAT)
+2.4      if distance between water and heavy atom is smaller than this, move water away  (WATER_RELAX_THR)
+t        Do relaxation on hydrogens                         (RELAX_H)
+-5.0     Energy threshold for keeping the conformer         (RELAX_E_THR)
+50       Loop over N local microstates                      (RELAX_NSTATES)
+6        default number of hydroxyl positions               (RELAX_N_HYD)
+10.      do not relax hydrogen if vdw bwt two sidechain conformer bigger than this    (RELAX_CLASH_THR)
+1.0      phi for each step of relaxation                    (RELAX_PHI)
+300      Maximum number of steps of relaxation              (RELAX_NITER)
+0.5      Torque threshold for keep relaxing                 (RELAX_TORQ_THR)
+f        Use specific control (head1.lst) on rotamer making (ROT_SPECIF)
+
+step 3:
+4.0      Protein dielectric constant for DelPhi             (EPSILON_PROT)
+80.0     Solvent dielectric constant for DelPhi             (EPSILON_SOLV)
+65       Grids in each DelPhi                               (GRIDS_DELPHI)
+2.0      The target grids per angstrom for DelPhi           (GRIDS_PER_ANG)
+1.4      Radius of the probe                                (RADIUS_PROBE)
+2.0      Ion radius                                         (IONRAD)
+0.15     Salt                                               (SALT)
+/home/mcce/mcce_alpha/delphi DelPhi excutable               (DELPHI_EXE)
+
+step 4:
+t        Average the pairwise, "f" uses the smaller         (AVERAGE_PAIRWISE)
+1.0      Warnning Threshold of difference in pairwise       (WARN_PAIRWISE)
+5.0      Big pairwise threshold to make big list            (BIG_PAIRWISE)
+
+t        Using Yifan's monte carlo                          (MONTE_ADV_OPT)
+
+-1       Random seed, -1 uses time as random seed           (MONTE_SEED)
+298.15   Temperature                                        (MONTE_T)
+50       Equalibration = n_eq * confs                       (MONTE_NEQ)
+50       Sampling = n_iter * confs                          (MONTE_NITER)
+3        Number of flips                                    (MONTE_FLIPS)
+0.001    Cut-off occupancy of the reduction                 (MONTE_REDUCE)
+
+50       Min Sampling = n_iter * confs                      (MONTE_NITER_MIN)
+-1       Max Sampling = n_iter * confs(-1=stop when converged)         (MONTE_NITER_MAX)
+100      Number of iterations each cycle                    (MONTE_NITER_CYCLE)
+100      niter * n_conf check convergence                   (MONTE_NITER_CHK)
+-1       Number of the reduce steps(-1=stop when converged)  (MONTE_N_REDUCE)
+0.1      Threshhold for convergence                         (MONTE_CONVERGE)
+f        Calculate free energy                              (MONTE_DO_ENERGY)
+
+298.15   Starting temperature for annealling                (ANNEAL_TEMP_START)
+0        Number of steps of annealling                      (ANNEAL_NSTEP)
+1000     Number of iterations for each annealling step      (ANNEAL_NITER_STEP)
+
+eh       "ph" fpr pH titration, "eh" for eh titration       (TITR_TYPE)
+7.0      Initial pH                                         (TITR_PH0)
+1.0      pH interval                                        (TITR_PHD)
+0.0      Initial Eh                                         (TITR_EH0)
+30.0     Eh interval (in mV)                                (TITR_EHD)
+15       Number of titration points                         (TITR_STEPS)
+
+# Advanced options:
+list_rot.gold  residue list for rotamer making              (ROTATE_RES)
+569       delphi start conformer number, 0 based            (DELPHI_START)
+570       delphi end conformer number, self included        (DELPHI_END)
+1.0      scaling factor of vdw pairwise                     (SCALE_VDW)
+1.0      scaling factor of electrostatic pairwise           (SCALE_ELE)
+f        skip delphi in step3 (DEBUG option)                (SKIP_ELE)
+/tmp     delphi temporary file folder, "/tmp" uses node     (DELPHI_FOLDER)
+t        clean up delphi focusing directory?                (DELPHI_CLEAN)

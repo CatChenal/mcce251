@@ -1,0 +1,219 @@
+# 2012/5: Cannot deal with terminal oxygen from an MD structure:
+#         need to remove them before using mcce:
+#         sed -e '/ATOM.\{9\}OT1/d' -e '/ATOM.\{9\}OT2/d' old.prot.pdb > prot.pdb
+# 2012/6: Added lines for renaming phosphate from a NAMD simulation.
+#  MD nomenclature:
+*****TIP3*****  *****HOH *****
+ OT1 *********   O   *********
+ OH2 HOH******   O   HOH****** 
+H1   HOH******   1H  HOH******
+H2   HOH******   2H  HOH******
+ H1  HOH******   1H  HOH******
+ H2  HOH******   2H  HOH******
+
+ HN  *********   H   *********
+ CD  LEU******   CD1 LEU******
+ CD  ILE******   CD1 ILE******
+ HD1 ILE******  1HD1 ILE******
+ HD2 ILE******  2HD1 ILE******
+ HD3 ILE******  3HD1 ILE******
+
+ HE1 MET******   1HE MET******
+ HE2 MET******   2HE MET******
+ HE3 MET******   3HE MET******
+ HE1 LYS******   1HE LYS******
+ HE2 LYS******   2HE LYS******
+
+**** HSE******  **** HIS******
+**** HSD******  **** HIS******
+**** HSP******  **** HIS******
+
+ HD1 PRO******   1HD PRO******
+ HD2 PRO******   2HD PRO******
+ HD1 ARG******   1HD ARG******
+ HD2 ARG******   2HD ARG******
+ HD1 LYS******   1HD LYS******
+ HD2 LYS******   2HD LYS******
+
+ HA1 *********   1HA *********
+ HA2 *********   2HA *********
+ HB1 *********   1HB *********
+ HB2 *********   2HB *********
+ HB3 *********   3HB *********
+
+ HG1 SER******    HG SER******
+ HG1 CYS******    HG CYS******
+ HG1 *********   1HG *********
+ 1HG THR******   HG1 THR******
+ HG2 *********   2HG *********
+
+ HZ1 *********   1HZ *********
+ HZ2 *********   2HZ *********
+ HZ3 *********   3HZ *********
+ 2HZ TRP******   HZ2 TRP******
+ 3HZ TRP******   HZ3 TRP******
+
+HD11 *********  1HD1 *********
+HD12 *********  2HD1 *********
+HD13 *********  3HD1 *********
+HD21 *********  1HD2 *********
+HD22 *********  2HD2 *********
+HD23 *********  3HD2 *********
+HE11 *********  1HE1 *********
+HE12 *********  2HE1 *********
+HE13 *********  3HE1 *********
+HE21 *********  1HE2 *********
+HE22 *********  2HE2 *********
+HE23 *********  3HE2 *********
+HG11 *********  1HG1 *********
+HG12 *********  2HG1 *********
+HG13 *********  3HG1 *********
+HG21 *********  1HG2 *********
+HG22 *********  2HG2 *********
+HG23 *********  3HG2 *********
+
+HH11 *********  1HH1 *********
+HH12 *********  2HH1 *********
+HH21 *********  1HH2 *********
+HH22 *********  2HH2 *********
+
+*P1  HPO4*****  *P   PO4 *****
+*O1  HPO4*****  *O1  PO4 *****
+*O2  HPO4*****  *O2  PO4 *****
+*O3  HPO4*****  *O3  PO4 *****
+*O4  HPO4*****  *O4  PO4 *****
+*H1  HPO4*****  *HO1 PO4 *****
+*H2  HPO4*****  *HO2 PO4 *****
+*P1  H2P******  *P   PO4******
+*O1  H2P******  *O1  PO4******
+*O2  H2P******  *O2  PO4******
+*O3  H2P******  *O3  PO4******
+*O4  H2P******  *O4  PO4******
+*H1  H2P******  *HO1 PO4******
+*H2  H2P******  *HO2 PO4******
+ D** *********   H** *********      rename all atom D to H
+***** ********  *****_********
+****** *******  ******_*******
+******* ******  *******_******
+
+*****HEME*****  *****HEM******
+
+*CAA*HEM******  *****PAA******      extract PAA from heme
+*CBA*HEM******  *****PAA******
+*CGA*HEM******  *****PAA******
+*O1A*HEM******  *****PAA******
+*O2A*HEM******  *****PAA******
+*HAA*HEM******  *****PAA******
+*HBA*HEM******  *****PAA******
+*H1A*HEM******  *****PAA******
+*H2A*HEM******  *****PAA******
+*CAD*HEM******  *****PDD******      extract PDD from heme
+*CBD*HEM******  *****PDD******
+*CGD*HEM******  *****PDD******
+*O1D*HEM******  *****PDD******
+*O2D*HEM******  *****PDD******
+*HAD*HEM******  *****PDD******
+*HBD*HEM******  *****PDD******
+*H1D*HEM******  *****PDD******
+*H2D*HEM******  *****PDD******
+
+# For heme_b only (bisHis heme):
+*****HEM******  *****HMB******
+
+# Coodination in 4H-2Hemes.pdb (as per VMD/NAMD psf patches):
+# HSE6  : Heme301 : HSE76
+# HSE41 : Heme302 : HSE111
+#
+*N  *HIS***  6  *****BKB******
+*CA *HIS***  6  *****BKB******
+*C  *HIS***  6  *****BKB******
+*O  *HIS***  6  *****BKB******
+*H  *HIS***  6  *****BKB******
+*HA *HIS***  6  *****BKB******
+
+*CB *HIS***  6  a****HMB***301
+*CG *HIS***  6  a****HMB***301
+*ND1*HIS***  6  a****HMB***301
+*CD2*HIS***  6  a****HMB***301
+*CE1*HIS***  6  a****HMB***301
+*NE2*HIS***  6  a****HMB***301
+*1HB*HIS***  6  a****HMB***301
+*2HB*HIS***  6  a****HMB***301
+*HD1*HIS***  6  a****HMB***301
+*HD2*HIS***  6  a****HMB***301
+*HE1*HIS***  6  a****HMB***301
+
+*N  *HIS*** 76  *****BKB******
+*CA *HIS*** 76  *****BKB******
+*C  *HIS*** 76  *****BKB******
+*O  *HIS*** 76  *****BKB******
+*H  *HIS*** 76  *****BKB******
+*HA *HIS*** 76  *****BKB******
+
+*CB *HIS*** 76  b****HMB***301
+*CG *HIS*** 76  b****HMB***301
+*ND1*HIS*** 76  b****HMB***301
+*CD2*HIS*** 76  b****HMB***301
+*CE1*HIS*** 76  b****HMB***301
+*NE2*HIS*** 76  b****HMB***301
+*1HB*HIS*** 76  b****HMB***301
+*2HB*HIS*** 76  b****HMB***301
+*HD1*HIS*** 76  b****HMB***301
+*HD2*HIS*** 76  b****HMB***301
+*HE1*HIS*** 76  b****HMB***301
+
+*N  *HIS*** 41  *****BKB******
+*CA *HIS*** 41  *****BKB******
+*C  *HIS*** 41  *****BKB******
+*O  *HIS*** 41  *****BKB******
+*H  *HIS*** 41  *****BKB******
+*HA *HIS*** 41  *****BKB******
+
+*CB *HIS*** 41  b****HMB***302
+*CG *HIS*** 41  b****HMB***302
+*ND1*HIS*** 41  b****HMB***302
+*CD2*HIS*** 41  b****HMB***302
+*CE1*HIS*** 41  b****HMB***302
+*NE2*HIS*** 41  b****HMB***301
+
+*1HB*HIS*** 41  b****HMB***302
+*2HB*HIS*** 41  b****HMB***302
+*HD1*HIS*** 41  b****HMB***302
+*HD2*HIS*** 41  b****HMB***302
+*HE1*HIS*** 41  b****HMB***302
+
+*N  *HIS***111  *****BKB******
+*CA *HIS***111  *****BKB******
+*C  *HIS***111  *****BKB******
+*O  *HIS***111  *****BKB******
+*H  *HIS***111  *****BKB******
+*HA *HIS***111  *****BKB******
+
+*CB *HIS***111  a****HMB***302
+*CG *HIS***111  a****HMB***302
+*ND1*HIS***111  a****HMB***302
+*CD2*HIS***111  a****HMB***302
+*CE1*HIS***111  a****HMB***302
+*NE2*HIS***111  a****HMB***302
+*1HB*HIS***111  a****HMB***302
+*2HB*HIS***111  a****HMB***302
+*HD1*HIS***111  a****HMB***302
+*HD2*HIS***111  a****HMB***302
+*HE1*HIS***111  a****HMB***302
+
+ O **ACT******   O_***********
+ C **ACT******   C_***********
+ O **CMO******   O_***********
+ C **CMO******   C_***********
+ O **CSS******   O_***********
+ C **CSS******   C_***********
+ N **CSS******   N_***********
+ O **PCA******   O_***********
+ C **PCA******   C_***********
+ N **PCA******   N_***********
+ O **ACN******   O_***********
+ C **ACN******   C_***********
+*NA **********  *N A**********     extra space for the NA in bcl, bph
+*NB **********  *N B**********
+*NC **********  *N C**********
+*ND **********  *N D**********

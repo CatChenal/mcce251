@@ -1,0 +1,25 @@
+CC      = g++
+CFLAGS  = -g -Wall -Wno-sign-compare -I/sw/include
+
+LIB     = mcce++.a
+AR      = ar
+ARFLAGS = rucvs
+
+SRC     = 	Prot.cpp	Res.cpp	Conf.cpp	Atom.cpp	Param.cpp	split.cpp\
+		monte.cpp	curve_fitting.cpp\
+		max_min.cpp	ran2.cpp	load_opp.cpp get_files.cpp
+
+OBJ     = $(SRC:.cpp=.o)
+
+HEADER  = mcce.hpp math3d.hpp
+
+$(LIB): $(OBJ)
+	$(AR) $(ARFLAGS) $(LIB) $(OBJ)
+
+$(OBJ): $(HEADER)
+
+.cpp.o:
+	$(CC) $(CFLAGS) -c $*.cpp
+
+#clean:
+#	rm -f *.o mcce++.a

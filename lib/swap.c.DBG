@@ -1,0 +1,70 @@
+#include <math.h>
+#include "mcce.h"
+
+int rot_swap(PROT prot)
+{
+  int i_res, i_conf, n_conf, ins, i_atom, j_atom, i_swap , counter;
+  SWAP_RULE swap_rule;
+  char sbuff[MAXCHAR_LINE];
+  VECTOR swap_xyz;
+
+  for ( i_res = 0; i_res < prot.n_res; i_res++ )
+  {
+    RES *res_p = &prot.res[i_res];
+
+    printf("DEBUG: *** main loop: %s (%i)\n",prot.res[i_res].resName, i_res);
+
+/* next line moved out of while loop:   */
+    n_conf = prot.res[i_res].n_conf;
+    printf("DEBUG: conformer count for %s: %i\n", prot.res[i_res].resName, n_conf);
+
+    counter = 0;
+    while (1)
+    {
+      sprintf(sbuff, "%i", counter);
+      printf("DEBUG: sbuff (counter): %s\n", sbuff);
+
+      /* skip if this residue does not have a ROT_SWAP record */
+      if (param_get("ROT_SWAP", res_p->resName, sbuff, &swap_rule)) break;
+      counter++;
+
+/*      n_conf = prot.res[i_res].n_conf;
+      printf("DEBUG: conformer count for %s: %i\n", res_Name, n_conf);  */
+
+      /* for each conformer, make a new conformer and apply swapping rule */
+      for ( i_conf=1; i_conf < n_conf; i_conf++ )
+      {
+        CONF *conf_p = &prot.res[i_res].conf[i_conf];
+
+        printf("DEBUG: current conformer: %s (i_conf %i); ID: %s\n", conf_p->confName, i_conf, conf_p->confID);
+
+        /* make new conformer */
+        ins = ins_conf(res_p, res_p->n_conf, conf_p->n_atom);
+        if (ins == USERERR)
+        {
+          printf("   FATAL: rot_swap(): Could not add conformer.\n");
+          return USERERR;
+        }
+        conf_p = &prot.res[i_res].conf[i_conf];
+        cpy_conf(&res_p->conf[ins], conf_p);
+
+        printf("DEBUG: conformer count after cpy_conf of %s: %i\n", conf_p->confName,  prot.res[i_res].n_conf);
+
+        /* apply swapping rule */
+        for ( i_swap=0; i_swap < swap_rule.n_swap; i_swap++ )
+        {
+          if ( param_get("IATOM", res_p->conf[ins].confName, swap_rule.swap_atom1[i_swap], &i_atom) ) continue;
+          if ( param_get("IATOM", res_p->conf[ins].confName, swap_rule.swap_atom2[i_swap], &j_atom) ) continue;
+
+          printf("DEBUG: swap %s with %s (n_swap: %i)\n", swap_rule.swap_atom1[i_swap], swap_rule.swap_atom2[i_swap], swap_rule.n_swap);
+
+          swap_xyz = res_p->conf[ins].atom[i_atom].xyz;
+          res_p->conf[ins].atom[i_atom].xyz = res_p->conf[ins].atom[j_atom].xyz;
+          res_p->conf[ins].atom[j_atom].xyz = swap_xyz;
+        }
+      }
+    } /* while(1) */
+  }  /* main for */
+  printf("DEBUG.......................\n");
+  return 0;
+}

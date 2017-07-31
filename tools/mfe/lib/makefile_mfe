@@ -1,0 +1,39 @@
+CC      = g++
+
+CFLAGS  = -g -Wall -I/sw/include
+#-Wno-sign-compare
+
+# compiler flags:
+#  -g    adds debugging information to the executable file
+#  -Wall turns on most, but not all, compiler warnings
+
+# define the executable file
+TARGET = mfe++
+MAIN = mfe++
+
+# define any libraries to link into executable:
+#   > ln -s mcce++.a mccelib (in same folder):
+LIB = -lmccelib
+
+SRC     =       mfe.cpp	Prot.cpp        Res.cpp Conf.cpp        Atom.cpp        Param.cpp       split.cpp\
+                monte.cpp       curve_fitting.cpp\
+                max_min.cpp     ran2.cpp        load_opp.cpp get_files.cpp
+
+OBJ     = $(SRC:.cpp=.o)
+
+HEADER  = mcce.hpp math3d.hpp
+
+# Next 2: archive??
+AR      = ar
+ARFLAGS = rucvs
+
+$(LIB): $(OBJ)
+	$(AR) $(ARFLAGS) $(LIB) $(OBJ)
+
+$(OBJ): $(HEADER)
+
+.cpp.o:
+	$(CC) $(CFLAGS) -c $*.cpp -o $(MAIN)
+
+clean:
+	rm -f *.o

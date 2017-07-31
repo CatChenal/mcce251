@@ -1,0 +1,251 @@
+g++ -g -Wall -I/sw/include -c mfe.cpp -o mfe++
+mfe.cpp: In function ‘int main(int, char**)’:
+mfe.cpp:80:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:85:35: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:111:59: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:119:59: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:128:47: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:138:86: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:141:73: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:146:61: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:150:73: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:156:73: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:175:46: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:182:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:190:55: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mfe.cpp:19:11: warning: variable ‘pairwise_threshold’ set but not used [-Wunused-but-set-variable]
+In file included from mfe.cpp:1:0:
+mcce.hpp: In function ‘T max_abs(const std::vector<T>&) [with T = float]’:
+mfe.cpp:180:24:   instantiated from here
+mcce.hpp:550:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c Prot.cpp -o mfe++
+Prot.cpp: In member function ‘int Prot::del_res(const int&)’:
+Prot.cpp:23:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::load_pdb(std::ifstream&)’:
+Prot.cpp:68:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:69:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::load_orig_pdb(std::ifstream&)’:
+Prot.cpp:128:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:129:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::load_demetri(std::ifstream&)’:
+Prot.cpp:188:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:189:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::load_conflist(std::ifstream&)’:
+Prot.cpp:219:20: warning: variable ‘k_conf’ set but not used [-Wunused-but-set-variable]
+Prot.cpp: In member function ‘Prot& Prot::load_occtable(std::ifstream&)’:
+Prot.cpp:293:47: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:328:51: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::all_info2atom()’:
+Prot.cpp:351:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:352:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:353:77: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Prot& Prot::write_conflist(std::ofstream&)’:
+Prot.cpp:431:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:432:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘int Prot::count_atom()’:
+Prot.cpp:476:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:477:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:478:73: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘int Prot::count_conf()’:
+Prot.cpp:491:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:492:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘void Prot::index_on()’:
+Prot.cpp:506:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:509:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:519:73: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘void Prot::make_sum_crg()’:
+Prot.cpp:539:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp: In member function ‘Res* Prot::find_res(const Res&)’:
+Prot.cpp:551:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Prot.cpp:567:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c Res.cpp -o mfe++
+Res.cpp: In member function ‘int Res::ins_conf(const Conf&, int)’:
+Res.cpp:117:51: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp: In member function ‘int Res::del_conf(const int&)’:
+Res.cpp:133:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp: In member function ‘std::string Res::resID()’:
+Res.cpp:145:36: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp:149:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp: In function ‘std::vector<float> operator*(std::vector<float>&, float&)’:
+Res.cpp:166:32: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp: In member function ‘void Res::make_sumcrg()’:
+Res.cpp:176:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp:181:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Res.cpp:188:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c Conf.cpp -o mfe++
+Conf.cpp: In member function ‘int Conf::find_katom(const string&)’:
+Conf.cpp:76:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+Conf.cpp:79:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c Atom.cpp -o mfe++
+g++ -g -Wall -I/sw/include -c Param.cpp -o mfe++
+Param.cpp: In function ‘int load_param(std::ifstream&)’:
+Param.cpp:269:41: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c split.cpp -o mfe++
+split.cpp: In function ‘bool equ_str(const string&, const string&)’:
+split.cpp:85:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+split.cpp:92:21: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+split.cpp: In function ‘std::string strip(const string&)’:
+split.cpp:99:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+split.cpp: In function ‘std::string add_under(std::string)’:
+split.cpp:122:37: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+split.cpp: In function ‘std::string rm_under(std::string)’:
+split.cpp:133:37: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+split.cpp: In function ‘std::string upper(std::string)’:
+split.cpp:144:48: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c monte.cpp -o mfe++
+monte.cpp: In function ‘int Monte()’:
+monte.cpp:72:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:99:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:145:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:168:44: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:186:52: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:201:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:211:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:219:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:222:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:238:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:244:54: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:251:62: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:254:72: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:279:54: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:282:64: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:306:62: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:316:54: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:319:79: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:344:54: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:365:62: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:368:72: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:380:48: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:386:50: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:396:48: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:402:48: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:443:44: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:447:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:454:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘int Monte_load_pairwise(Prot&)’:
+monte.cpp:476:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:480:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:491:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:492:57: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:495:51: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:496:65: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_get_biglist(Prot&)’:
+monte.cpp:536:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:539:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:543:61: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:545:64: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_check_toggle(Prot&)’:
+monte.cpp:567:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:570:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:580:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:596:64: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_set_toggle(Prot&)’:
+monte.cpp:621:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:623:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:633:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘Prot Monte_reduce(const Prot&)’:
+monte.cpp:665:54: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:667:72: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_MC(Prot&)’:
+monte.cpp:740:47: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:759:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:786:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:790:48: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘int Monte_out(Prot&)’:
+monte.cpp:815:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:832:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:852:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:874:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:875:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:878:49: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:881:72: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:883:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:903:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_zero_counters(Prot&)’:
+monte.cpp:926:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:928:56: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_update_TS(Prot&)’:
+monte.cpp:937:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:938:63: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:942:76: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:945:82: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:952:86: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:960:86: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_group_conf_type(Prot&)’:
+monte.cpp:972:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:974:60: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:976:76: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp:986:63: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+monte.cpp: In function ‘void Monte_update_energy(Prot&)’:
+monte.cpp:1010:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+In file included from monte.cpp:9:0:
+mcce.hpp: In function ‘T sum(const std::vector<T>&) [with T = float]’:
+mcce.hpp:502:28:   instantiated from ‘T stdev(const std::vector<T>&) [with T = float]’
+monte.cpp:187:74:   instantiated from here
+mcce.hpp:479:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘T sumsq(const std::vector<T>&) [with T = float]’:
+mcce.hpp:503:94:   instantiated from ‘T stdev(const std::vector<T>&) [with T = float]’
+monte.cpp:187:74:   instantiated from here
+mcce.hpp:486:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c curve_fitting.cpp -o mfe++
+In file included from curve_fitting.cpp:4:0:
+mcce.hpp: In function ‘T max(const std::vector<T>&) [with T = float]’:
+curve_fitting.cpp:36:37:   instantiated from here
+mcce.hpp:539:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘T min(const std::vector<T>&) [with T = float]’:
+curve_fitting.cpp:37:37:   instantiated from here
+mcce.hpp:520:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘int nearest_index(T, const std::vector<T>&) [with T = float]’:
+curve_fitting.cpp:51:50:   instantiated from here
+mcce.hpp:584:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘std::vector<T> subvec(const std::vector<T>&, int, int) [with T = float]’:
+curve_fitting.cpp:53:48:   instantiated from here
+mcce.hpp:619:5: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘int find_match_index(T, const std::vector<T>&, T) [with T = float]’:
+curve_fitting.cpp:63:95:   instantiated from here
+mcce.hpp:595:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘T sum(const std::vector<T>&) [with T = float]’:
+mcce.hpp:493:46:   instantiated from ‘T average(const std::vector<T>&) [with T = float]’
+curve_fitting.cpp:53:49:   instantiated from here
+mcce.hpp:479:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c max_min.cpp -o mfe++
+max_min.cpp: In function ‘std::vector<float> sum_vecs(std::vector<std::vector<float> >)’:
+max_min.cpp:35:38: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp:36:41: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp:43:42: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘void print_vec(std::vector<float>, std::string)’:
+max_min.cpp:52:30: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp:54:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘std::string vec2string(std::vector<float>, std::string)’:
+max_min.cpp:66:30: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp:70:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘std::string vec2string(std::vector<int>, std::string)’:
+max_min.cpp:84:30: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp:88:28: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘std::vector<float> get_stats(std::vector<float>, std::vector<float>, float)’:
+max_min.cpp:111:31: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘std::vector<float> get_stats(std::vector<float>, float)’:
+max_min.cpp:122:33: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+max_min.cpp: In function ‘std::vector<std::vector<int> > get_bins(std::vector<int>, std::vector<float>, float, float)’:
+max_min.cpp:145:33: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+In file included from max_min.cpp:5:0:
+mcce.hpp: In function ‘T min(const std::vector<T>&) [with T = float]’:
+max_min.cpp:100:31:   instantiated from here
+mcce.hpp:520:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+mcce.hpp: In function ‘T max(const std::vector<T>&) [with T = float]’:
+max_min.cpp:101:31:   instantiated from here
+mcce.hpp:539:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c ran2.cpp -o mfe++
+g++ -g -Wall -I/sw/include -c load_opp.cpp -o mfe++
+load_opp.cpp: In function ‘int load_opp(std::vector<double>&, std::ifstream&, const Prot&, int)’:
+load_opp.cpp:12:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+load_opp.cpp:33:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+load_opp.cpp:47:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+load_opp.cpp: In function ‘int load_opp(double*, std::ifstream&, const Prot&)’:
+load_opp.cpp:77:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+load_opp.cpp:98:43: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+load_opp.cpp:112:39: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+g++ -g -Wall -I/sw/include -c get_files.cpp -o mfe++
+ar rucvs -lmccelib mfe.o Prot.o Res.o Conf.o Atom.o Param.o split.o monte.o curve_fitting.o max_min.o ran2.o load_opp.o get_files.o
+ar: two different operation options specified
+make: *** [-lmccelib] Error 1

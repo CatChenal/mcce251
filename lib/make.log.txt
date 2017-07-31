@@ -1,0 +1,305 @@
+monte.c: In function ‘fitit’:
+monte.c:1142:12: warning: variable ‘netcrg’ set but not used [-Wunused-but-set-variable]
+     float *netcrg;        // reinstated 2/15; was removed due to compile err:  - netcrg -  set but not used [-Wunused-but-set-variable]
+            ^
+monte.c: In function ‘get_mfe’:
+monte.c:1714:19: warning: variable ‘ex’ set but not used [-Wunused-but-set-variable]
+     float ph, eh, ex;
+                   ^
+relaxation.c: In function ‘initial_relaxation’:
+relaxation.c:470:11: warning: variable ‘ires_p’ set but not used [-Wunused-but-set-variable]
+     RES  *ires_p;
+           ^
+relaxation.c: In function ‘relaxation_setup’:
+relaxation.c:1247:24: warning: variable ‘relax_atom_p’ set but not used [-Wunused-but-set-variable]
+                 RELAX *relax_atom_p;
+                        ^
+quick_e.c:12:14: warning: ‘cutoff_near2’ defined but not used [-Wunused-variable]
+ static float cutoff_near2 = VDW_CUTOFF_NEAR * VDW_CUTOFF_NEAR;
+              ^
+quick_e.c:13:14: warning: ‘cutoff_far2’ defined but not used [-Wunused-variable]
+ static float cutoff_far2  = VDW_CUTOFF_FAR  * VDW_CUTOFF_FAR;
+              ^
+zip.c: In function ‘def’:
+zip.c:49:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+         strm.next_in = in;
+                      ^
+zip.c:55:27: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+             strm.next_out = out;
+                           ^
+zip.c: In function ‘inf’:
+zip.c:108:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+         strm.next_in = in;
+                      ^
+zip.c:113:27: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+             strm.next_out = out;
+                           ^
+make_matrices.c: In function ‘make_matrices’:
+make_matrices.c:24:9: warning: variable ‘serial’ set but not used [-Wunused-but-set-variable]
+     int serial;
+         ^
+make_matrices.c:29:5: warning: ‘verbose’ is used uninitialized in this function [-Wuninitialized]
+  if (verbose != 1) {
+     ^
+add_membrane.c: In function ‘anchor2defined’:
+add_membrane.c:252:26: warning: variable ‘pos_k’ set but not used [-Wunused-but-set-variable]
+     VECTOR pos_i, pos_j, pos_k;
+                          ^
+load_pdb_no_param.c: In function ‘load_pdb_binary_no_param’:
+load_pdb_no_param.c:332:9: warning: unused variable ‘original_index’ [-Wunused-variable]
+     int original_index;
+         ^
+load_pdb_no_param.c:325:9: warning: unused variable ‘i_atom’ [-Wunused-variable]
+     int i_atom;
+         ^
+ga_engine.c: In function ‘GA_SETUP’:
+ga_engine.c:186:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+    #pragma omp parallel
+ ^
+ga_engine.c:340:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+   #pragma omp parallel for shared(i) private(k,m,j_idx,i_idx,sum,atm0,atm1,dx,dy,dz,d2,SMIN,EPS_MIN,SIG_D2,SIG_D6,SIG_D12)
+ ^
+ga_engine.c:294:23: warning: unused variable ‘tmp_idx’ [-Wunused-variable]
+     int i_idx, j_idx, tmp_idx;
+                       ^
+ga_engine.c:204:23: warning: unused variable ‘end’ [-Wunused-variable]
+    struct timeb start,end;
+                       ^
+ga_engine.c:204:17: warning: unused variable ‘start’ [-Wunused-variable]
+    struct timeb start,end;
+                 ^
+ga_engine.c: In function ‘evaluate_population2’:
+ga_engine.c:425:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(i, j, k, m, i_idx, j_idx, tmp_idx)
+ ^
+ga_engine.c:424:26: warning: unused variable ‘tmp_idx’ [-Wunused-variable]
+  int i,j,k,m,i_idx,j_idx,tmp_idx,p;
+                          ^
+ga_engine.c: In function ‘evaluate_population’:
+ga_engine.c:457:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(atm0, atm1, SMIN, EPS_MIN, SIG_D2, SIG_D6, SIG_D12, i, j, k, L, m, n, dx, dy, dz, d2, vdw)
+ ^
+ga_engine.c:454:20: warning: unused variable ‘r’ [-Wunused-variable]
+  int i,j,k,L,m,n,p,r;
+                    ^
+ga_engine.c: In function ‘evaluate_ind’:
+ga_engine.c:504:25: warning: unused variable ‘p’ [-Wunused-variable]
+         int i,j,k,L,m,n,p;
+                         ^
+ga_engine.c: In function ‘Boltzmann_Pressure_Converge’:
+ga_engine.c:572:23: warning: unused variable ‘parent3’ [-Wunused-variable]
+  int parent, parent2, parent3;
+                       ^
+ga_engine.c: In function ‘Boltzmann_Pressure_Converge2’:
+ga_engine.c:592:30: warning: unused variable ‘parent3’ [-Wunused-variable]
+         int parent, parent2, parent3;
+                              ^
+ga_engine.c:592:13: warning: unused variable ‘parent’ [-Wunused-variable]
+         int parent, parent2, parent3;
+             ^
+ga_engine.c: In function ‘Boltzmann_Pressure_Diverge2’:
+ga_engine.c:609:13: warning: unused variable ‘parent’ [-Wunused-variable]
+         int parent, parent2;
+             ^
+ga_engine.c: In function ‘Random_N_Point_Crossover’:
+ga_engine.c:696:9: warning: unused variable ‘j’ [-Wunused-variable]
+  int i, j;
+         ^
+ga_engine.c: In function ‘copy_population_over’:
+ga_engine.c:762:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for
+ ^
+ga_engine.c: In function ‘compute_population_average’:
+ga_engine.c:832:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(p) reduction(+:average)
+ ^
+ga_engine.c: In function ‘deltaE’:
+ga_engine.c:1077:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for 
+ ^
+ga_engine.c:1083:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for reduction(+:d_e) 
+ ^
+ga_engine.c: In function ‘similarity_check_slow’:
+ga_engine.c:1106:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+   #pragma omp parallel for private(i,j,k,new_value)
+ ^
+ga_engine.c: In function ‘similarity_check_fast’:
+ga_engine.c:1128:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(i,j)
+ ^
+ga_engine.c:1132:0: warning: ignoring #pragma omp critical [-Wunknown-pragmas]
+                                 #pragma omp critical
+ ^
+ga_engine.c:1140:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(i,j,k,new_value)
+ ^
+ga_engine.c: In function ‘clear_sumvdw’:
+ga_engine.c:1157:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(i,j)
+ ^
+ga_engine.c: In function ‘RUN_GA’:
+ga_engine.c:1380:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+    #pragma omp parallel for
+ ^
+ga_engine.c:1383:0: warning: ignoring #pragma omp critical [-Wunknown-pragmas]
+      #pragma omp critical
+ ^
+ga_engine.c:1433:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+  #pragma omp parallel for private(i,j)
+ ^
+ga_engine.c:1558:4: warning: embedded ‘\0’ in format [-Wformat-contains-nul]
+    sprintf(prot->res[i].conf[j].confID,"%08i\0",j);
+    ^
+ga_engine.c:1560:5: warning: embedded ‘\0’ in format [-Wformat-contains-nul]
+     sprintf(prot->res[i].conf[j].atom[k].confID,"%08i\0",j);
+     ^
+ga_engine.c:1428:13: warning: unused variable ‘count’ [-Wunused-variable]
+         int count=0;
+             ^
+ga_engine.c:1190:35: warning: unused variable ‘end2’ [-Wunused-variable]
+  struct timeb start, end, start2, end2;
+                                   ^
+ga_engine.c:1190:27: warning: unused variable ‘start2’ [-Wunused-variable]
+  struct timeb start, end, start2, end2;
+                           ^
+rotamers_ga.c: In function ‘prep_for_step3_and_step4’:
+rotamers_ga.c:86:17: warning: unused variable ‘k’ [-Wunused-variable]
+    int c, i, j, k;
+                 ^
+rotamers_ga.c:86:8: warning: unused variable ‘c’ [-Wunused-variable]
+    int c, i, j, k;
+        ^
+rotamers_ga.c: In function ‘rotamers_GA’:
+rotamers_ga.c:392:10: warning: unused variable ‘ga_focus_probe_radius’ [-Wunused-variable]
+    float ga_focus_probe_radius;
+          ^
+rotamers_ga.c:391:8: warning: unused variable ‘ga_focus_resid’ [-Wunused-variable]
+    int ga_focus_resid;
+        ^
+rotamers_ga.c:206:9: warning: unused variable ‘line’ [-Wunused-variable]
+    char line[MAXCHAR_LINE];
+         ^
+rotamers_ga.c:205:23: warning: unused variable ‘i_atom’ [-Wunused-variable]
+    int i_res, i_conf, i_atom;
+                       ^
+rotamers_ga.c:205:15: warning: unused variable ‘i_conf’ [-Wunused-variable]
+    int i_res, i_conf, i_atom;
+               ^
+rotamers_ga.c:205:8: warning: unused variable ‘i_res’ [-Wunused-variable]
+    int i_res, i_conf, i_atom;
+        ^
+rotamers_ga.c:199:9: warning: unused variable ‘sbuff’ [-Wunused-variable]
+    char sbuff[MAXCHAR_LINE];
+         ^
+rotamers_ga.c:198:29: warning: unused variable ‘m’ [-Wunused-variable]
+    int c, i, j, kr, kc,ic,k,m;
+                             ^
+compute_patches.c: In function ‘find_fartest_distance’:
+compute_patches.c:126:10: warning: unused variable ‘k’ [-Wunused-variable]
+  int i,j,k;
+          ^
+compute_patches.c:126:8: warning: unused variable ‘j’ [-Wunused-variable]
+  int i,j,k;
+        ^
+compute_patches.c: In function ‘full_atom_distance’:
+compute_patches.c:211:12: warning: unused variable ‘m’ [-Wunused-variable]
+  int i,j,k,m;
+            ^
+compute_patches.c: In function ‘compute_patches’:
+compute_patches.c:529:10: warning: unused variable ‘tmp’ [-Wunused-variable]
+   double tmp;
+          ^
+compute_patches.c:343:12: warning: unused variable ‘m’ [-Wunused-variable]
+  int i,j,k,m;
+            ^
+ar rvs mcce.a all.o ddvv.o geom_3v_onto_3v.o ins_res.o strip.o app.o del_conf.o geom_apply.o line_2v.o vdotv.o avv.o del_prot.o geom_inverse.o load_all_param.o vector_normalize.o avvvv.o del_res.o geom_move.o load_param.o vector_vminusv.o cpy_conf.o det3.o geom_reset.o mxm4.o vector_vplusv.o cpy_prot.o det4.o geom_roll.o new_prot.o vector_vxv.o cpy_res.o dll.o get_files.o param_get.o param_exist.o db_close.o dvv.o iatom.o param_sav.o db_open.o free_strings.o ins_conf.o plane_3v.o pdbline2atom.o premcce.o init.o mcce.o load_pdb.o write_pdb.o rotamers.o assign_rad.o get_connect12.o surfw.o vdw.o vdw_conf.o shuffle_n.o cmp_conf.o sort_conf.o sort_res.o id_conf.o energies.o assign_crg.o coulomb.o coulomb_conf.o get_vdw0.o get_vdw1.o relax_water.o relax_h.o monte.o monte2.o ran2.o relaxation.o collect_connect.o torsion.o vdw_fast.o hbond_extra.o swap.o quick_e.o check_tpl.o zip.o del_dir.o make_matrices.o mem_position.o probe.o add_membrane.o load_pdb_no_param.o ga_engine.o rotamers_ga.o compute_patches.o
+r - all.o
+r - ddvv.o
+r - geom_3v_onto_3v.o
+r - ins_res.o
+r - strip.o
+r - app.o
+r - del_conf.o
+r - geom_apply.o
+r - line_2v.o
+r - vdotv.o
+r - avv.o
+r - del_prot.o
+r - geom_inverse.o
+r - load_all_param.o
+r - vector_normalize.o
+r - avvvv.o
+r - del_res.o
+r - geom_move.o
+r - load_param.o
+r - vector_vminusv.o
+r - cpy_conf.o
+r - det3.o
+r - geom_reset.o
+r - mxm4.o
+r - vector_vplusv.o
+r - cpy_prot.o
+r - det4.o
+r - geom_roll.o
+r - new_prot.o
+r - vector_vxv.o
+r - cpy_res.o
+r - dll.o
+r - get_files.o
+r - param_get.o
+r - param_exist.o
+r - db_close.o
+r - dvv.o
+r - iatom.o
+r - param_sav.o
+r - db_open.o
+r - free_strings.o
+r - ins_conf.o
+r - plane_3v.o
+r - pdbline2atom.o
+r - premcce.o
+r - init.o
+r - mcce.o
+r - load_pdb.o
+r - write_pdb.o
+r - rotamers.o
+r - assign_rad.o
+r - get_connect12.o
+r - surfw.o
+r - vdw.o
+r - vdw_conf.o
+r - shuffle_n.o
+r - cmp_conf.o
+r - sort_conf.o
+r - sort_res.o
+r - id_conf.o
+r - energies.o
+r - assign_crg.o
+r - coulomb.o
+r - coulomb_conf.o
+r - get_vdw0.o
+r - get_vdw1.o
+r - relax_water.o
+r - relax_h.o
+r - monte.o
+r - monte2.o
+r - ran2.o
+r - relaxation.o
+r - collect_connect.o
+r - torsion.o
+r - vdw_fast.o
+r - hbond_extra.o
+r - swap.o
+r - quick_e.o
+r - check_tpl.o
+r - zip.o
+r - del_dir.o
+r - make_matrices.o
+r - mem_position.o
+r - probe.o
+r - add_membrane.o
+r - load_pdb_no_param.o
+r - ga_engine.o
+r - rotamers_ga.o
+r - compute_patches.o

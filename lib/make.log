@@ -1,0 +1,119 @@
+init.c: In function ‘get_env’:
+init.c:925:5: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘double’ [-Wformat]
+init.c:928:5: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘double’ [-Wformat]
+init.c:1120:5: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘IPECE’ [-Wformat]
+init.c:1123:5: warning: format ‘%f’ expects argument of type ‘double’, but argument 6 has type ‘IPECE’ [-Wformat]
+init.c:1126:5: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘IPECE’ [-Wformat]
+init.c:1129:5: warning: format ‘%f’ expects argument of type ‘double’, but argument 6 has type ‘IPECE’ [-Wformat]
+init.c:1132:5: warning: format ‘%f’ expects argument of type ‘double’, but argument 6 has type ‘IPECE’ [-Wformat]
+init.c:1141:5: warning: format ‘%f’ expects argument of type ‘double’, but argument 6 has type ‘int’ [-Wformat]
+rotamers.c: In function ‘place_rot’:
+rotamers.c:739:10: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c: In function ‘swing_rot’:
+rotamers.c:972:10: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c: In function ‘prune_hdirected’:
+rotamers.c:4226:10: warning: variable ‘d_relax’ set but not used [-Wunused-but-set-variable]
+rotamers.c: In function ‘relax_this_pair’:
+rotamers.c:4365:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c:4382:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c:4455:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c:4472:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c:4539:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c:4556:7: warning: format not a string literal and no format arguments [-Wformat-security]
+rotamers.c: In function ‘max_confSAS’:
+rotamers.c:5058:7: warning: format not a string literal and no format arguments [-Wformat-security]
+energies.c: In function ‘conf_rxn’:
+energies.c:1819:4: warning: format not a string literal and no format arguments [-Wformat-security]
+get_vdw0.c: In function ‘get_vdw0_no_sas’:
+get_vdw0.c:74:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+relax_h.c: In function ‘relax_h’:
+relax_h.c:516:25: warning: variable ‘convg’ set but not used [-Wunused-but-set-variable]
+monte.c: In function ‘get_mfe’:
+monte.c:1703:19: warning: variable ‘ex’ set but not used [-Wunused-but-set-variable]
+relaxation.c: In function ‘initial_relaxation’:
+relaxation.c:470:11: warning: variable ‘ires_p’ set but not used [-Wunused-but-set-variable]
+relaxation.c: In function ‘relaxation_setup’:
+relaxation.c:1247:24: warning: variable ‘relax_atom_p’ set but not used [-Wunused-but-set-variable]
+quick_e.c:12:14: warning: ‘cutoff_near2’ defined but not used [-Wunused-variable]
+quick_e.c:13:14: warning: ‘cutoff_far2’ defined but not used [-Wunused-variable]
+zip.c: In function ‘def’:
+zip.c:49:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+zip.c:55:27: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+zip.c: In function ‘inf’:
+zip.c:108:22: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+zip.c:113:27: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+make_matrices.c: In function ‘make_matrices’:
+make_matrices.c:24:9: warning: variable ‘serial’ set but not used [-Wunused-but-set-variable]
+make_matrices.c:29:5: warning: ‘verbose’ is used uninitialized in this function [-Wuninitialized]
+add_membrane.c: In function ‘anchor2defined’:
+add_membrane.c:252:26: warning: variable ‘pos_k’ set but not used [-Wunused-but-set-variable]
+load_pdb_no_param.c: In function ‘load_pdb_binary_no_param’:
+load_pdb_no_param.c:332:9: warning: unused variable ‘original_index’ [-Wunused-variable]
+load_pdb_no_param.c:325:9: warning: unused variable ‘i_atom’ [-Wunused-variable]
+ga_engine.c: In function ‘GA_SETUP’:
+ga_engine.c:186:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:340:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:294:23: warning: unused variable ‘tmp_idx’ [-Wunused-variable]
+ga_engine.c:204:23: warning: unused variable ‘end’ [-Wunused-variable]
+ga_engine.c:204:17: warning: unused variable ‘start’ [-Wunused-variable]
+ga_engine.c: In function ‘evaluate_population2’:
+ga_engine.c:425:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:424:26: warning: unused variable ‘tmp_idx’ [-Wunused-variable]
+ga_engine.c: In function ‘evaluate_population’:
+ga_engine.c:457:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:454:20: warning: unused variable ‘r’ [-Wunused-variable]
+ga_engine.c: In function ‘evaluate_ind’:
+ga_engine.c:504:25: warning: unused variable ‘p’ [-Wunused-variable]
+ga_engine.c: In function ‘Boltzmann_Pressure_Converge’:
+ga_engine.c:572:23: warning: unused variable ‘parent3’ [-Wunused-variable]
+ga_engine.c: In function ‘Boltzmann_Pressure_Converge2’:
+ga_engine.c:592:30: warning: unused variable ‘parent3’ [-Wunused-variable]
+ga_engine.c:592:13: warning: unused variable ‘parent’ [-Wunused-variable]
+ga_engine.c: In function ‘Boltzmann_Pressure_Diverge2’:
+ga_engine.c:609:13: warning: unused variable ‘parent’ [-Wunused-variable]
+ga_engine.c: In function ‘Random_N_Point_Crossover’:
+ga_engine.c:696:9: warning: unused variable ‘j’ [-Wunused-variable]
+ga_engine.c: In function ‘copy_population_over’:
+ga_engine.c:762:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘compute_population_average’:
+ga_engine.c:832:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘deltaE’:
+ga_engine.c:1077:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:1083:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘similarity_check_slow’:
+ga_engine.c:1106:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘similarity_check_fast’:
+ga_engine.c:1128:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:1132:0: warning: ignoring #pragma omp critical [-Wunknown-pragmas]
+ga_engine.c:1140:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘clear_sumvdw’:
+ga_engine.c:1157:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c: In function ‘RUN_GA’:
+ga_engine.c:1380:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:1383:0: warning: ignoring #pragma omp critical [-Wunknown-pragmas]
+ga_engine.c:1433:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ga_engine.c:1558:4: warning: embedded ‘\0’ in format [-Wformat-contains-nul]
+ga_engine.c:1560:5: warning: embedded ‘\0’ in format [-Wformat-contains-nul]
+ga_engine.c:1428:13: warning: unused variable ‘count’ [-Wunused-variable]
+ga_engine.c:1190:35: warning: unused variable ‘end2’ [-Wunused-variable]
+ga_engine.c:1190:27: warning: unused variable ‘start2’ [-Wunused-variable]
+rotamers_ga.c: In function ‘prep_for_step3_and_step4’:
+rotamers_ga.c:86:17: warning: unused variable ‘k’ [-Wunused-variable]
+rotamers_ga.c:86:8: warning: unused variable ‘c’ [-Wunused-variable]
+rotamers_ga.c: In function ‘rotamers_GA’:
+rotamers_ga.c:392:10: warning: unused variable ‘ga_focus_probe_radius’ [-Wunused-variable]
+rotamers_ga.c:391:8: warning: unused variable ‘ga_focus_resid’ [-Wunused-variable]
+rotamers_ga.c:206:9: warning: unused variable ‘line’ [-Wunused-variable]
+rotamers_ga.c:205:23: warning: unused variable ‘i_atom’ [-Wunused-variable]
+rotamers_ga.c:205:15: warning: unused variable ‘i_conf’ [-Wunused-variable]
+rotamers_ga.c:205:8: warning: unused variable ‘i_res’ [-Wunused-variable]
+rotamers_ga.c:199:9: warning: unused variable ‘sbuff’ [-Wunused-variable]
+rotamers_ga.c:198:29: warning: unused variable ‘m’ [-Wunused-variable]
+compute_patches.c: In function ‘find_fartest_distance’:
+compute_patches.c:126:10: warning: unused variable ‘k’ [-Wunused-variable]
+compute_patches.c:126:8: warning: unused variable ‘j’ [-Wunused-variable]
+compute_patches.c: In function ‘full_atom_distance’:
+compute_patches.c:211:12: warning: unused variable ‘m’ [-Wunused-variable]
+compute_patches.c: In function ‘compute_patches’:
+compute_patches.c:529:10: warning: unused variable ‘tmp’ [-Wunused-variable]
+compute_patches.c:343:12: warning: unused variable ‘m’ [-Wunused-variable]

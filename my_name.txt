@@ -1,0 +1,132 @@
+# 2012/5: Cannot deal with terminal oxygen from an MD structure:
+#         need to remove them before using mcce:
+#         sed -e '/ATOM.\{9\}OT1/d' -e '/ATOM.\{9\}OT2/d' old.prot.pdb > prot.pdb
+# 2012/6: Added lines for renaming phosphate from a NAMD simulation.
+# 2014/5: bisHis heme renaming (Koder protein)
+ D** *********   H** *********      rename all atom D to H
+ CL  CL  *****   CL   CL *****
+***** ********  *****_********
+****** *******  ******_*******
+******* ******  *******_******
+
+*****HEME*****  *****HEM******
+*CAA*HEM******  *****PAA******      extract PAA from heme
+*CBA*HEM******  *****PAA******
+*CGA*HEM******  *****PAA******
+*O1A*HEM******  *****PAA******
+*O2A*HEM******  *****PAA******
+*HAA*HEM******  *****PAA******
+*HBA*HEM******  *****PAA******
+*H1A*HEM******  *****PAA******
+*H2A*HEM******  *****PAA******
+*CAD*HEM******  *****PDD******      extract PDD from heme
+*CBD*HEM******  *****PDD******
+*CGD*HEM******  *****PDD******
+*O1D*HEM******  *****PDD******
+*O2D*HEM******  *****PDD******
+*HAD*HEM******  *****PDD******
+*HBD*HEM******  *****PDD******
+*H1D*HEM******  *****PDD******
+*H2D*HEM******  *****PDD******
+
+# For heme_b only (bisHis heme):
+*****HEM******  *****HMB******
+
+# Coodination in 4H-2Hemes.pdb (as per VMD/NAMD psf patches):
+# HSE6  : Heme301 : HSE76
+# HSE41 : Heme302 : HSE111
+#
+*N  *HIS***  6  *****BKB******
+*CA *HIS***  6  *****BKB******
+*C  *HIS***  6  *****BKB******
+*O  *HIS***  6  *****BKB******
+*H  *HIS***  6  *****BKB******
+*HA *HIS***  6  *****BKB******
+
+*CB *HIS***  6  a****HMB***301
+*CG *HIS***  6  a****HMB***301
+*ND1*HIS***  6  a****HMB***301
+*CD2*HIS***  6  a****HMB***301
+*CE1*HIS***  6  a****HMB***301
+*NE2*HIS***  6  a****HMB***301
+*1HB*HIS***  6  a****HMB***301
+*2HB*HIS***  6  a****HMB***301
+*HD1*HIS***  6  a****HMB***301
+*HD2*HIS***  6  a****HMB***301
+*HE1*HIS***  6  a****HMB***301
+
+*N  *HIS*** 76  *****BKB******
+*CA *HIS*** 76  *****BKB******
+*C  *HIS*** 76  *****BKB******
+*O  *HIS*** 76  *****BKB******
+*H  *HIS*** 76  *****BKB******
+*HA *HIS*** 76  *****BKB******
+
+*CB *HIS*** 76  b****HMB***301
+*CG *HIS*** 76  b****HMB***301
+*ND1*HIS*** 76  b****HMB***301
+*CD2*HIS*** 76  b****HMB***301
+*CE1*HIS*** 76  b****HMB***301
+*NE2*HIS*** 76  b****HMB***301
+
+*1HB*HIS*** 76  b****HMB***301
+*2HB*HIS*** 76  b****HMB***301
+*HD1*HIS*** 76  b****HMB***301
+*HD2*HIS*** 76  b****HMB***301
+*HE1*HIS*** 76  b****HMB***301
+
+*N  *HIS*** 41  *****BKB******
+*CA *HIS*** 41  *****BKB******
+*C  *HIS*** 41  *****BKB******
+*O  *HIS*** 41  *****BKB******
+*H  *HIS*** 41  *****BKB******
+*HA *HIS*** 41  *****BKB******
+
+*CB *HIS*** 41  b****HMB***302
+*CG *HIS*** 41  b****HMB***302
+*ND1*HIS*** 41  b****HMB***302
+*CD2*HIS*** 41  b****HMB***302
+*CE1*HIS*** 41  b****HMB***302
+*NE2*HIS*** 41  b****HMB***302
+
+*1HB*HIS*** 41  b****HMB***302
+*2HB*HIS*** 41  b****HMB***302
+*HD1*HIS*** 41  b****HMB***302
+*HD2*HIS*** 41  b****HMB***302
+*HE1*HIS*** 41  b****HMB***302
+
+*N  *HIS***111  *****BKB******
+*CA *HIS***111  *****BKB******
+*C  *HIS***111  *****BKB******
+*O  *HIS***111  *****BKB******
+*H  *HIS***111  *****BKB******
+*HA *HIS***111  *****BKB******
+
+*CB *HIS***111  a****HMB***302
+*CG *HIS***111  a****HMB***302
+*ND1*HIS***111  a****HMB***302
+*CD2*HIS***111  a****HMB***302
+*CE1*HIS***111  a****HMB***302
+*NE2*HIS***111  a****HMB***302
+*1HB*HIS***111  a****HMB***302
+*2HB*HIS***111  a****HMB***302
+*HD1*HIS***111  a****HMB***302
+*HD2*HIS***111  a****HMB***302
+*HE1*HIS***111  a****HMB***302
+
+ O **ACT******   O_***********
+ C **ACT******   C_***********
+ O **CMO******   O_***********
+ C **CMO******   C_***********
+ O **CSS******   O_***********
+ C **CSS******   C_***********
+ N **CSS******   N_***********
+ O **PCA******   O_***********
+ C **PCA******   C_***********
+ N **PCA******   N_***********
+ O **ACN******   O_***********
+ C **ACN******   C_***********
+*NA **********  *N A**********     extra space for the NA in bcl, bph
+*NB **********  *N B**********
+*NC **********  *N C**********
+*ND **********  *N D**********
